@@ -7,7 +7,8 @@ from auth import login
 st.set_page_config(
     page_title="Tarefas - Preâmbulo Financeiro",
     page_icon="assets/favicon.ico",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # Verificar se o usuário está autenticado
