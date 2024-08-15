@@ -15,7 +15,7 @@ if "authenticated" not in st.session_state:
 
 # Se o usuário está autenticado, exibir o dashboard
 if st.session_state["authenticated"]:
-    st.title("Bem-vindo ao Dashboard!")
+    st.title("Andamento Consultoria - Preâmbulo Financeiro!")
 
     file_path = 'Hub Financeiro.csv'
     try:
