@@ -5,8 +5,8 @@ from auth import login
 
 # Configurar o dashboard em modo wide
 st.set_page_config(
-    page_title="Consultor Financeiro",
-    page_icon="/assets/favicon.ico",
+    page_title="Tarefas - Preâmbulo Financeiro",
+    page_icon="assets/favicon.ico",
     layout="wide"
 )
 
