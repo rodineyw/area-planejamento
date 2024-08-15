@@ -9,7 +9,7 @@ load_dotenv()
 # Dicionário de usuários e senhas usando as variáveis do .env
 USER_CREDENTIALS = {
     os.getenv("USER_1"): {"password": os.getenv("PASSWORD_1"), "role": "visitor", },
-    os.getenv("USER_2"): {"passwordo": os.getenv("PASSWORD_2"), "role": "admin"}
+    os.getenv("USER_2"): {"password": os.getenv("PASSWORD_2"), "role": "admin"}
 }
 
 
