@@ -4,7 +4,11 @@ import plotly.express as px
 from auth import login
 
 # Configurar o dashboard em modo wide
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Consultor Financeiro",
+    page_icon="/assets/favicon.ico",
+    layout="wide"
+)
 
 # Verificar se o usuário está autenticado
 if "authenticated" not in st.session_state:
