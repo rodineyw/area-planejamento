@@ -20,7 +20,14 @@ if "authenticated" not in st.session_state:
 
 # Se o usuário está autenticado, exibir o dashboard
 if st.session_state["authenticated"]:
-    st.title("Andamento Consultoria - Preâmbulo Financeiro!")
+    st.title(f"Bem-vindo, {st.session_state['username']}!")
+
+    # Acesso limitado para usuários com diferentes permissões
+    if st.session_state["role"] == "admin":
+        st.subheader("Painel de Controle")
+        st.write("Aqui estão as opções de gerenciamento do app...")
+    else:
+        st.write("Você está no modo de visualização como Visitante.")
 
     file_path = 'Hub Financeiro.csv'
     try:
