@@ -44,8 +44,8 @@ Contas a Pagar,Automação de pagamentos,Em andamento,Baixa,RB 131 - Em Testes -
 Contas a Pagar,Comprovantes de pagamento contas pagas,Em andamento,Alta,Automação (importar e exportar titulos) (Carlos Luz),,,,,,
 Controladoria,"DRE (Conciliação Movimento Bancário – Receber
 x A Pagar)",Em andamento,Média,Parametrização (Interno c/ Diogo),,Rodiney Wanderson,1 de junho de 2024,,,
-Tarefa,,A fazer,,,,,,,,
-Tarefa,,A fazer,,,,,,,,
+Contas a Pagar,Relatório Fechamento Bancos,A fazer,Baixa,Filtro da data de Atualização para pegar erros em data de conciliação estranhas resolvido. Adicionar Unidade e historico lançamento CPR no relatório fechamento data da atualização,,,,,,
+Contas a Pagar,Diminuição Robos de Rateio,A fazer,Baixa,Hoje temos 3 conjuntos de 3 robos de rateio para atualização. Achar uma forma de otimizar e reduzir os robos das filiais para somente 3 robos,,,,,,
 Contas a Receber,Controle Status de Lançamentos da CC,A fazer,Média,"Quando os lançamentos estão a faturar na CC, eles se encontram em momentos diferentes de gestão (alguns carregados no portal, em analise, aprovado, solicitar reembolso, etc), achar uma forma de colocar o status e filtrar por status, EM LOTE. Victor procurará opção via processual.",,,,,,
 Contas a Receber,Comprovante de Pagamento,A fazer,Média,"Salvar Comprovante de Pagamento de localizador Codigo (194) - Mais uma situação a ser resolvida com imp e exp de docs do CPR e CC - Iremos exportar em lote, dos títulos da 194 do cpr após a anexação do cv pagamento, exportamos todos documentos de um período, colocamos na planilha e carregamos a importação dos docs no CC. Se quiser, possível importar nos títulos 193 também. ",,,,,,
 Controladoria,Reestruturação do Plano Contas Contábil,A fazer,Baixa,"Carlos e Jorge irão reestruturar, reorganizar e criar novas contas sintéticas para trazer uma classificação padrão do plano do contas DRE",,,,,,
