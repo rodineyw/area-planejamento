@@ -2,6 +2,9 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 from auth import login
+import schedule
+import time
+from threading import Thread
 
 # Configurar o dashboard em modo wide
 st.set_page_config(
@@ -10,6 +13,34 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Função para atualizar os dados
+
+
+def atualizar_dados():
+    try:
+        df = pd.read_csv('Hub Financeiro.csv')
+        st.session_state['df'] = df
+        print('Dados Atualizados')
+    except FileNotFoundError:
+        st.error(
+            "O arquivo 'Hub Financeiro.csv' não foi encontrado. Verifique o caminho do arquivo.")
+
+
+# Funçaõ para rodar o scheduler em um thread separado
+def run_scheduler():
+    schedule.every(30).minutes.do(atualizar_dados)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+# Inicia o schedule em segundo plano
+def start_scheduler():
+    t = Thread(target=run_scheduler)
+    t.daemon = True
+    t.start()
+
 
 # Verificar se o usuário está autenticado
 if "authenticated" not in st.session_state:
