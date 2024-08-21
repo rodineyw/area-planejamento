@@ -14,9 +14,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+
 # Função para atualizar os dados
-
-
 def atualizar_dados():
     try:
         df = pd.read_csv('Hub Financeiro.csv')
