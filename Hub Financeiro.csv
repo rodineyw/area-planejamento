@@ -1,68 +1,73 @@
-﻿Nome da tarefa,Descrição,Status,Prioridade,Resumo,Projeto,Responsável,Prazo,Tags,Subtarefas,Tarefa principal
-Contas a Receber,Erro Salvamento de Arquivos pós Fat,Concluída,Média,Cris irá testar novamente em sua máquina o salvamento dos arquivos e caso esteja com o erro testamos diretamente na máquina da Cris,,,,,,
-Contas a Pagar,Adiantamento para Filiais,Concluída,Média,Prestação de Contas - Filial preenche planilha gastos internos - Matriz adapta no robo 131 e carrega todos os titulos em lote na unidade da filial,,,,,,
-Contas a Pagar,Saldo Inicial,Concluída,Média,Ajuste ano 2021/22/23 - Saldo Ajustado,,,,,,
-Contas a Pagar,Nº Nota Fiscal,Concluída,Média,"Informar o número da Nota Fiscal a (Contas a Pagar/Receber) a partir do lançamento da SPF. - Concluido com a solução de ajuste da rotina de colocar no resumo da SPF a informação da NF a pagar quando a conta for custas localizadores. Sugestão de melhria, colocar campo PIX nas inf financeiras das pessoas",,,,,,
-Contas a Receber,Faturar com Filtro,Concluída,Média,"Resolvido faturar com filtro data, data de criação nao reflete. Quando definido um filtro de Período, ao selecionar os títulos para faturar, não está faturando. ",,,,,,
-Contas a Receber,Cadastros para Pagamento,Concluída,Baixa,Atualmente são cadastrados vários processos de entrega amigável para a realização de apenas 1 único pagamento (ideia: ficha consutiva) - Abrir ficha consultiva e SPF atende normalmente demandas a pagar e receber,,,,,,
-Contas a Receber,Alteração Lançamentos Não Identificados,Concluída,Média,"REVISAR 26/06 - Rotina de cancelar a baixa do banco, alimentar historico com o cliente identificado e baixa novamente pela Cris. Conciliação Katia",,,,,,
-Contas a Receber,Robô de faturamento 0004,Concluída,Baixa,"Possibilidade de alimentar o numero da Nota Fiscal e data de emissão. ",,,,,,
-Contas a Pagar,Usar conta do DRE como Rateio das filiais,Concluída,Média,"É possivel parametrizar uma conta dentro do DRE que possua as porcentagem de rateio de uma filial especifica, e utilizar essa conta como rateio na filial?",,,,,,
-Controladoria,DADOS LOCALIZADORES - RECEITAS E REEMBOLSO,Concluída,Alta,SPFs de custas de localizadores estavam sendo lançadas na conta de reembolso de localizadores (receita) então acabava ficando negativo ao fim da operação. SPF a pagar sempre conta negativa,,,,,,
-Contas a Pagar,Planilha de Titulos,Concluída,Alta,"Rodiney e Victor irão procurar um software de auxilio para transformar pdf e excel. Salvar o lote de NF e boleto em uma pasta, carregar todos, dar o tratamento e carregar na planilha do rb 131 - Planilha títulos para enviar para fornecedores fazer preenchimento.",,,,,,
-Contas a Pagar,Baixa Adiantamento,Concluída,Alta,"Será solucionada com o novo fluxo SPF - Retorno 08/04/2024 Não informar número do banco (qual impacto) ",,,,,,
-Contas a Pagar,Adiantamento (crédito em conta),Concluída,Alta,"Lançar Adiantamento Crédito na CC, Faturar pela Diferença, faturar selecionar conta DRE abatimento",,,,,,
-Contas a Receber,Reestruturação C/C RCB,Concluída,Alta,"Precisamos incluir em uma conta só, todos os cliente da RCB",,,,,,
-Controladoria,Treinamento de BI e Alinhamento DRE Escritório,Concluída,Média,Treinamento de BI e comparação com DRE escritório,,,,,,
-Controladoria,Valor do Processo,Concluída,Alta,"Exibir quanto custou o processo, entradas e saídas",,,,,,
-Contas a Receber,Boleto com QR Code,Concluída,Baixa,Gerar o boleto com QR Code ( Aguardando API Cobrança TI),,,,,,
-Contas a Receber,Crédito não identificado,Concluída,Alta,Difícil identificação (Aguardando Robô 131 Diogo) - Verificar interno,,,,,,
-Controladoria,Grupo de Contas para Gestão Orçamentária (Próxima reunião),Concluída,Média,Orçamento do DRE Atende - Carregamento BD,,Rodiney Wanderson,,,,
+﻿Nome da tarefa,Descrição,Status,Prioridade,Resumo,"Responsável "
+Contas a Receber,Erro Salvamento de Arquivos pós Fat,Concluída,Média,Cris irá testar novamente em sua máquina o salvamento dos arquivos e caso esteja com o erro testamos diretamente na máquina da Cris,Diogo
+Contas a Pagar,Adiantamento para Filiais,Concluída,Média,Prestação de Contas - Filial preenche planilha gastos internos - Matriz adapta no robô 131 e carrega todos os títulos em lote na unidade da filial,Diogo
+Contas a Pagar,Saldo Inicial,Concluída,Média,Ajuste ano 2021/22/23 - Saldo Ajustado,Diogo
+Contas a Receber,Reembolso pela agenda,Concluída,Média,"Informar Status no Protocolo e Carregar no campo Protocolo através do robo 04. Utilizar o filtro para filtrar status e faturar, posteriormente informar o numero do protocolo substituindo o status. Cris irá testar - Verificar melhor forma de tratar agenda com casos de reembolso com a Cris - Workflow",Cristina
+Contas a Pagar,Lançamento em Lote,Concluída,Baixa,"Lançar em Lote SPF’s (Custas, correspondente e Notificação) - Estudar Robô Lançamentos SPF em Lote - Ródiney Robô em execução, melhorias a realizar.",Ródiney
+Contas a Pagar,Nº Nota Fiscal,Concluída,Média,"Informar o número da Nota Fiscal a (Contas a Pagar/Receber) a partir do lançamento da SPF. - Concluido com a solução de ajuste da rotina de colocar no resumo da SPF a informação da NF a pagar quando a conta for custas localizadores. Sugestão de melhria, colocar campo PIX nas inf financeiras das pessoas",Diogo
+Contas a Pagar,Título Imposto Retido,Concluída,Média,"Rb 131 - Gerar um título de imposto retido, a partir da Nota Fiscal - Montagem de relatório no CPR exportando impostos lançados no Perfil Trib 2 e usar como base de exportação do relatório do robô 131 já no formato do robô e carregar em lote",Wendlys
+Contas a Receber,Faturar com Filtro,Concluída,Média,"Resolvido faturar com filtro data, data de criação não reflete. Quando definido um filtro de Período, ao selecionar os títulos para faturar, não está faturando. ",Diogo
+Contas a Receber,Cadastros para Pagamento,Concluída,Baixa,Atualmente são cadastrados vários processos de entrega amigável para a realização de apenas 1 único pagamento (ideia: ficha consultiva) - Abrir ficha consultiva e SPF atende normalmente demandas a pagar e receber,Diogo
+Contas a Receber,Alteração Lançamentos Não Identificados,Concluída,Média,"REVISAR 26/06 - Rotina de cancelar a baixa do banco, alimentar historico com o cliente identificado e baixa novamente pela Cris. Conciliação Katia",Diogo
+Contas a Receber,Robô de faturamento 0004,Concluída,Baixa,"Possibilidade de alimentar o numero da Nota Fiscal e data de emissão. ",Diogo
+Contas a Receber,Parametrizar a Data de vencimento,Concluída,Média,"Parametrizar a data de vencimento para faturamento de cada cliente, no momento do faturamento na conta corrente.",Diogo
+Contas a Pagar,Usar conta do DRE como Rateio das filiais,Concluída,Média,"É possível parametrizar uma conta dentro do DRE que possua as porcentagem de rateio de uma filial especifica, e utilizar essa conta como rateio na filial?",Diogo
+Controladoria,DADOS LOCALIZADORES - RECEITAS E REEMBOLSO,Concluída,Alta,SPFs de custas de localizadores estavam sendo lançadas na conta de reembolso de localizadores (receita) então acabava ficando negativo ao fim da operação. SPF a pagar sempre conta negativa,Diogo
+Contas a Pagar,Planilha de Titulos,Concluída,Alta,"Rodiney e Victor irão procurar um software de auxilio para transformar pdf e excel. Salvar o lote de NF e boleto em uma pasta, carregar todos, dar o tratamento e carregar na planilha do rb 131 - Planilha títulos para enviar para fornecedores fazer preenchimento.",Ródiney
+Contas a Pagar,Baixa Adiantamento,Concluída,Alta,"Será solucionada com o novo fluxo SPF - Retorno 08/04/2024 Não informar número do banco (qual impacto) ",Calos
+Contas a Pagar,Adiantamento (crédito em conta),Concluída,Alta,"Lançar Adiantamento Crédito na CC, Faturar pela Diferença, faturar selecionar conta DRE abatimento",Diogo
+Contas a Receber,Reestruturação C/C RCB,Concluída,Alta,"Precisamos incluir em uma conta só, todos os cliente da RCB",Diogo
+Contas a Receber,"Relatório de Honorários ",Concluída,Alta,"Relatório Atos Padrão Até sair o Módulo de Contratos- Desenvolvimento com o Ródiney - Relatório com os eventos de honorários, que extraia o valor de cada honorário lançado.",Ródiney
+Controladoria,Treinamento de BI e Alinhamento DRE Escritório,Concluída,Média,Treinamento de BI e comparação com DRE escritório,Diogo
+Controladoria,Valor do Processo,Concluída,Alta,"Exibir quanto custou o processo, entradas e saídas",Diogo
+Contas a Pagar,Salvamento de Documentos em Lote,Concluída,Alta,"RB 131 - Em Testes - Criação de Robo de  Extração de Documentos CPR em Lote para envio posterior da contabilidade - Upgrade ",Diogo
+Contas a Receber,Boleto com QR Code,Concluída,Baixa,Gerar o boleto com QR Code ( Aguardando API Cobrança TI),Diogo
+Contas a Receber,Crédito não identificado,Concluída,Alta,Difícil identificação (Aguardando Robô 131 Diogo) - Verificar interno,Diogo
+Contas a Pagar,Automação de pagamentos,Concluída,Baixa,RB 131 - Em Testes - Atende Folha - Importa CPR P/R - Dossie Entregue e Utilização Padrão,Diogo
+Controladoria,Grupo de Contas para Gestão Orçamentária (Próxima reunião),Concluída,Média,Orçamento do DRE Atende - Carregamento BD,Diogo
 Contas a Receber,"Controle de Contas Recebidas/Contas Pagas -
-Localizadores (saldo???)",Concluída,Alta,Desenvolvimento (Cris fara os testes),,,,,,
+Localizadores (saldo???)",Concluída,Alta,Desenvolvimento (Cris fara os testes),Diogo
 Contas a Pagar,Rateio,Concluída,Alta,"3 Triggers e 1 Gatilho para Executar Atualização Rateio Automatico  - Contas a Pagar e Projeção (atualização
-pela data de vencimento/baixa)",,,,,,
+pela data de vencimento/baixa)",Diogo
+Contas a Pagar,Comprovantes de pagamento contas pagas,Concluída,Alta,Automação (importar e exportar titulos) (Carlos Luz) - Resolvido com o Robo Rodiney Rod Deferir 1.0,Calos
 Contas a Pagar,Desenvolvimento Diogo,Concluída,Alta,"Habilitar o processo de integração bancário -
-CNAB (Conta Corrente Caixa Banco) - Não temos Boletos a Pagar - Aguardando nova atualização referente a isso",,,,,,
+CNAB (Conta Corrente Caixa Banco) - Não temos Boletos a Pagar - Aguardando nova atualização referente a isso",Diogo
 Contas a Pagar,Treinamento,Concluída,Alta,"Revisão do Fluxo de Processo Contábil e
-Financeiro",,Rodiney Wanderson,,,,
-Contas a Pagar,BI (Movimento Fluxo de Caixa),Concluída,Baixa,Fluxo de caixa - relatorio (Diogo) 07/02,,Rodiney Wanderson,,,,
-Contas a Receber,Faturamento Atos Automatização de Honorários robô 004,Concluída,Baixa,"Cadastro Atos Faturaveis no Contrato, Emissão dos Honrários por Relatorio e Importação no CC via Rb 04 ",,Rodiney Wanderson,22 de janeiro de 2024,,,
-Contas a Receber,Conta não reembolsáveis,Concluída,Baixa,Testar Relatorio CC  N Reemb Filtros Diogo,,Rodiney Wanderson,19 de janeiro de 2024,,,
-Contas a Pagar,Campo de Pix,Em andamento,Baixa,"
-Criar campo para informar número do PIx ( cadastro de pessoas ) - Abertura de sugestão para Desenvolvimento CPJ",,,,,,
-Contas a Pagar,Documento (pasta),Em andamento,Baixa,Criar outro documento (pasta ) para visualizar em tela comprovante no modulo do contas a pagar/receber - Não é possivel criar um campo de doc adicional. Iremos criar um relatório de comprovantes (comprovante filtro diferente)  da tabela GED no módulo CPR que traga o nome de todos os arquivos anexados nos títulos e identificaremos qual título não tem o comprovante vinculado. - Criação de CALC com técnicos,,,,,,
-Contas a Pagar,Parcelas com vencimento programado,Em andamento,Baixa,"Gerar as parcelas com  vencimento 15/40/45 dias - Abrir a sugestão, mas a rotina é apos realizado o parcelamento, pesquisa da parcelas, edita os vencimentos conforme o periodo na mão.",,,,,,
-Contas a Receber,Reembolso pela agenda,Em andamento,Média,Verificar melhor forma de tratar agenda com casos de reembolso com a Cris,,,,,,
-Contas a Pagar,Lançamento em Lote,Em andamento,Baixa,"Lançar em Lote SPF’s (Custas, correspondendte e Notificação) - Estudar Robo Lançamentos SPF em Lote - Rodiney desenvolvendo Robo Externo",,,,,,
-Contas a Pagar,HISTÓRICO - LANÇAMENTO CC,Em andamento,Média,"Dentro do título no campo Lançamento CC, não está vindo a informação do campo ‘’Histórico’’.",,,,,,
-Contas a Pagar,Rateio das Filiais,Em andamento,Alta,É possível ratear algumas contas do dre de acordo com particularidade. Falta somente 1 grupo de robos que atende 3 filiais faltantes,,,,,,
-Contas a Receber,"Relatório de Honorários ",Em andamento,Alta,"Desenvolvimento com o Ródiney - Relatório com os eventos de honorários, que extraia o valor de cada honorário lançado.",,,,,,
-Contas a Receber,Documentos em Lote,Em andamento,Alta,Cris testando - Salva no CPR e salva em lote - Criação de Robo de Importação e Exportação 04 de Documentos CC em Lote para adicionar no portal do cliente,,,,,,
-Contas a Pagar,Salvamento de Documentos em Lote,Em andamento,Alta,RB 131 - Em Testes - Criação de Robo de  Extração de Documentos CPR em Lote para envio posterior da contabilidade,,,,,,
-Contas a Pagar,Automação de pagamentos,Em andamento,Baixa,RB 131 - Em Testes - Atende Folha - Importa CPR P/R,,,,,,
-Contas a Pagar,Comprovantes de pagamento contas pagas,Em andamento,Alta,Automação (importar e exportar titulos) (Carlos Luz),,,,,,
-Controladoria,"DRE (Conciliação Movimento Bancário – Receber
-x A Pagar)",Em andamento,Média,Parametrização (Interno c/ Diogo),,Rodiney Wanderson,1 de junho de 2024,,,
-Contas a Pagar,Relatório Fechamento Bancos,A fazer,Baixa,Filtro da data de Atualização para pegar erros em data de conciliação estranhas resolvido. Adicionar Unidade e historico lançamento CPR no relatório fechamento data da atualização,,,,,,
-Contas a Pagar,Diminuição Robos de Rateio,A fazer,Baixa,Hoje temos 3 conjuntos de 3 robos de rateio para atualização. Achar uma forma de otimizar e reduzir os robos das filiais para somente 3 robos,,,,,,
-Contas a Receber,Controle Status de Lançamentos da CC,A fazer,Média,"Quando os lançamentos estão a faturar na CC, eles se encontram em momentos diferentes de gestão (alguns carregados no portal, em analise, aprovado, solicitar reembolso, etc), achar uma forma de colocar o status e filtrar por status, EM LOTE. Victor procurará opção via processual.",,,,,,
-Contas a Receber,Comprovante de Pagamento,A fazer,Média,"Salvar Comprovante de Pagamento de localizador Codigo (194) - Mais uma situação a ser resolvida com imp e exp de docs do CPR e CC - Iremos exportar em lote, dos títulos da 194 do cpr após a anexação do cv pagamento, exportamos todos documentos de um período, colocamos na planilha e carregamos a importação dos docs no CC. Se quiser, possível importar nos títulos 193 também. ",,,,,,
-Controladoria,Reestruturação do Plano Contas Contábil,A fazer,Baixa,"Carlos e Jorge irão reestruturar, reorganizar e criar novas contas sintéticas para trazer uma classificação padrão do plano do contas DRE",,,,,,
-Contas a Receber,Fluxo Financeiro,A fazer,Alta,Verificar possibilidade de melhorar o fluxo do financeiro - Ex.: Mostrar fluxograma Itaú Reembolso - Adequar rotinas do financeiro em fluxos do cpj,,,,,,
-Contas a Pagar,Rateio automatico,A fazer,Baixa,lançar conta do dre e o sistema atualizar de acordo com ultima atualização. - abrir como BUG para desenvolvimento CPJ,,,,,,
-Contas a Pagar,Título Imposto Retido,A fazer,Média,"Rb 131 - Gerar um título de imposto retido, a partir da Nota Fiscal - Montagem de relatório no CPR exportando impostos lançados no Perfil Trib 2 e usar como base de exportação do relatório do robo 131 já no formato do robo e carregar em lote",,,,,,
-Controladoria,Previsibilidade das Entradas x Saidas,A fazer,Média,Conjunto de Relatórios Agendados para Gestores de CPR e Custas/Reembolso,,,,,,
-Contas a Pagar,Fluxo de Caixa,A fazer,Alta,Saldo final incorreto o relatório de faturamento,,,,,,
-Contas a Receber,Parametrizar a Data de vencimento,A fazer,Média,"Parametrizar a data de vencimento para faturamento de cada cliente, no momento do faturamento na conta corrente.",,,,,,
-Controladoria,Planilha Padrão de Importação de Orçamento,A fazer,Média,"Com base na planilha enviada pela Perez, montar uma planilha para importar orçamento, com dre, uni, cc, valor",,,,,,
-Controladoria,Relatório de Validação de Orçamento,A fazer,Média,"Montagem do Relatório que traga Orçamento da Conta do DRE e o valor Baixado da conta no momento, Previsão/Realização e 100% se possível (calc que faça diferença de uma pela outra 0.100 pra dar %)",,,,,,
-Controladoria,Validação do BI de Faturamento,A fazer,Alta,Validar BI de Faturamento e Gerar o DRE e Add Orçamento no BI,,,,,,
-Controladoria,Redefinir novo modelo de Plano de Contas,A fazer,Alta,Estruturação do plano de contas e DRE (Interno c/Diogo),,Rodiney Wanderson,,,,
+Financeiro",Diogo
+Contas a Pagar,BI (Movimento Fluxo de Caixa),Concluída,Baixa,Fluxo de caixa - relatorio (Diogo) 07/02,Diogo
+Contas a Receber,Faturamento Atos Automatização de Honorários robô 004,Concluída,Baixa,"Cadastro Atos Faturaveis no Contrato, Emissão dos Honrários por Relatorio e Importação no CC via Rb 04 ",Diogo
+Contas a Receber,Conta não reembolsáveis,Concluída,Baixa,Testar Relatorio CC  N Reemb Filtros Diogo,Diogo
+Contas a Pagar,Histórico de Cancelamento,Em andamento,Baixa,Histórico de cancelamento modulo contas/caixa. - Adicionar Log de Exclusões no Banco. Irá verificar que excluiu e quando. Verificar se conseguem visualizar pela view,Dev
+Contas a Pagar,Relatório Fechamento Bancos,Em andamento,Baixa,Filtro da data de Atualização para pegar erros em data de conciliação estranhas resolvido. Adicionar Unidade e histórico lançamento CPR no relatório fechamento data da atualização,Wendlys
+Contas a Pagar,Campo de Pix,Em andamento,Baixa,Criar campo para informar número do Pix ( cadastro de pessoas ) - Abertura de sugestão para Desenvolvimento CPJ,Dev
+Contas a Pagar,Documento (pasta),Em andamento,Baixa,Criar outro documento (pasta ) para visualizar em tela comprovante no modulo do contas a pagar/receber - Não é possivel criar um campo de doc adicional. Iremos criar um relatório de comprovantes (comprovante filtro diferente)  da tabela GED no módulo CPR que traga o nome de todos os arquivos anexados nos títulos e identificaremos qual título não tem o comprovante vinculado. - Criação de CALC com técnicos,Wendlys
+Contas a Pagar,Parcelas com vencimento programado,Em andamento,Baixa,"Gerar as parcelas com  vencimento 15/40/45 dias - Abrir a sugestão, mas a rotina é após realizado o parcelamento, pesquisa da parcelas, edita os vencimentos conforme o período na mão.",Diogo
+Contas a Pagar,HISTÓRICO - LANÇAMENTO CC,Em andamento,Média,"Dentro do título no campo Lançamento CC, não está vindo a informação do campo ‘’Histórico’’.",Diogo
+Contas a Pagar,Rateio das Filiais,Em andamento,Alta,É possível ratear algumas contas do dre de acordo com particularidade. Falta somente 1 grupo de robôs que atende 3 filiais faltantes - Wendy e Unificação Robos Filial,Diogo
+Contas a Receber,Documentos em Lote,Em andamento,Alta,Cris testando - Salva no CPR e salva em lote - Criação de Robô de Importação e Exportação 04 de Documentos CC em Lote para adicionar no portal do cliente - Rb 131 upgrade resolve e robo rodiney resolve,Cristina
+Controladoria,Parametrização,Em andamento,Média," DRE (Conciliação Movimento Bancário – Receber
+x A Pagar) (Interno c/ Diogo)",Diogo
+Contas a Pagar,SPF Cancelada depois de baixada,A fazer,Alta,"Abrir chamado na Preâmbulo explicando a situação, eu abri pelo helpdesk porém não foi efetivo, talvez não soube explicar.",Ródiney
+Contas a Pagar,DRE,A fazer,Média,"Devoluções de valores ( evento , pagamento indevido etc) criar conta no dre",Diogo
+Controladoria,Avaliação de Alçadas de Aprovação,A fazer,Média,Proteção da Area Financeira - Avaliar possibilidades bloqueio alçada. - Entrega da SPF com alçada. Criação de rotinas de relatórios de alçada e avaliação.,Control
+Controladoria,Carregamento Orçamento por BD,A fazer,Alta," Iremos fazer o carregamento do orçamento na base de homologação a partir de outubro, aprimorando os dados e formas de importação para posterior carregamento do orçamento 2025",Control
+Contas a Pagar,Data Conciliação,A fazer,Baixa,Data da atualização da conciliação está incorreta no relatório (Relatório Fechamento - Data Atualização) modulo contas/caixa.,Wendlys
+Contas a Pagar,Layout CNAB Pagar Sispag Itau para PIX,A fazer,Média,Estudar os layouts passados e tentar adequar o cpj a realizar a emissão do layout pronto. Ver soluções itaú. adicionar Campo Z chave pix,Dev
+Contas a Pagar,Diminuição Robos de Rateio,A fazer,Baixa,Hoje temos 3 conjuntos de 3 robos de rateio para atualização. Achar uma forma de otimizar e reduzir os robos das filiais para somente 3 robos,Wendlys
+Contas a Receber,Comprovante de Pagamento,A fazer,Média,"Salvar Comprovante de Pagamento de localizador Codigo (194) - Mais uma situação a ser resolvida com imp e exp de docs do CPR e CC - Iremos exportar em lote, dos títulos da 194 do cpr após a anexação do cv pagamento, exportamos todos documentos de um período, colocamos na planilha e carregamos a importação dos docs no CC. Se for possível importar nos títulos 193 também. ",Diogo
+Controladoria,Reestruturação do Plano Contas Contábil,A fazer,Baixa,"Carlos e Jorge irão reestruturar, reorganizar e criar novas contas sintéticas para trazer uma classificação padrão do plano do contas DRE",Control
+Contas a Receber,Fluxo Financeiro,A fazer,Alta,Verificar possibilidade de melhorar o fluxo do financeiro - Ex.: Mostrar fluxograma Itaú Reembolso - Adequar rotinas do financeiro em fluxos do cpj,Ródiney
+Contas a Pagar,Rateio automatico,A fazer,Baixa,lançar conta do dre e o sistema atualizar de acordo com ultima atualização. - abrir como BUG para desenvolvimento CPJ,Dev
+Controladoria,Previsibilidade das Entradas x Saidas,A fazer,Média,Conjunto de Relatórios Agendados para Gestores de CPR e Custas/Reembolso,Control
+Contas a Pagar,Fluxo de Caixa,A fazer,Alta,Saldo final incorreto o relatório de faturamento,Dev
+Controladoria,Planilha Padrão de Importação de Orçamento,A fazer,Média,"Com base na planilha enviada pela Perez, montar uma planilha para importar orçamento, com dre, uni, cc, valor",Diogo
+Controladoria,Relatório de Validação de Orçamento,A fazer,Média,"Montagem do Relatório que traga Orçamento da Conta do DRE e o valor Baixado da conta no momento, Previsão/Realização e 100% se possível (calc que faça diferença de uma pela outra 0.100 pra dar %)",Diogo
+Controladoria,Validação do BI de Faturamento,A fazer,Alta,Validar BI de Faturamento e Gerar o DRE e Add Orçamento no BI,Control
+Controladoria,Redefinir modelo de Plano de Contas,A fazer,Alta,Estruturação do plano de contas e DRE (Interno c/Diogo),Diogo
 Controladoria,"Integração Tesouraria Perez x Banco Conta
-Corrente",A fazer,Alta,Desenvolvimento (Interno c/ Diogo),,,,,,
-Controladoria,DRE - Estruturação Plano de Contas,A fazer,Média,Parametrização (Interno c/ Diogo),,Rodiney Wanderson,,,,
+Corrente",A fazer,Alta,Desenvolvimento (Interno c/ Diogo),Diogo
+Controladoria,Parametrização,A fazer,Média,"DRE - Estruturação Plano de Contas  (Interno c/ Diogo) ",Diogo
 Contas a Pagar,"Avaliação do Processo e Fluxo de Trabalho
-(Contas a Pagar e Contas a Receber)",A fazer,Média,Treinamentos (Diogo) Fluxo SPF,,,,,,
-Contas a Pagar,Guias Pagas pelos clientes (adiantamento) (Vinculo SPF Externo),A fazer,Baixa,Fluxo do procedimento (Carlos Desenvolvendo Solução SPF),,,,,,
-Contas a Pagar,Integração com a Contabilidade,A fazer,Baixa,Exportação - Planilha Excel - Integração precisa de parametrização - Aguardando DRE,,Rodiney Wanderson,1 de junho de 2024,,,
+(Contas a Pagar e Contas a Receber)",A fazer,Média,Treinamentos (Diogo) Fluxo SPF,Diogo
+Contas a Pagar,Guias Pagas pelos clientes (adiantamento) (Vinculo SPF Externo),A fazer,Baixa,Fluxo do procedimento (Carlos Desenvolvendo Solução SPF),Calos
+Contas a Pagar,Integração com a Contabilidade,A fazer,Baixa,Exportação - Planilha Excel - Integração precisa de parametrização - Aguardando DRE,Control
