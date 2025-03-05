@@ -11,10 +11,8 @@ df['Prioridade'] = df['Prioridade'].fillna('Não Definida')
 df['Atualizado por'] = df['Atualizado por'].fillna('Não Definido')
 df['Data de Início'] = df['Data de Início'].fillna('Não informado')
 df['Data de Término'] = pd.to_datetime(df['Data de Término'], errors='coerce')
-df['Ano de Término'] = df['Data de Término'].dt.year.fillna('Não informado')
-
-# Converter 'Ano de Término' para inteiro, removendo valores inválidos
-df['Ano de Término'] = pd.to_numeric(df['Ano de Término'], errors='coerce').fillna(0).astype(int)
+df['Ano de Término'] = pd.to_numeric(df['Data de Término'].dt.year, errors='coerce').fillna(0).astype(int)
+df['Mês de Término'] = df['Data de Término'].dt.to_period('M').astype(str)
 
 # Configuração do Streamlit
 st.set_page_config(page_title="Dashboard de Projetos", layout="wide")
@@ -22,19 +20,19 @@ st.set_page_config(page_title="Dashboard de Projetos", layout="wide")
 # Título do dashboard
 st.title("📊 Dashboard de Projetos")
 
-# Filtro por projeto
-projetos_selecionados = st.multiselect("Selecione um projeto", df['Projeto'].unique())
+# Filtro por projeto e data
+col_filtro1, col_filtro2 = st.columns([2, 2])
+with col_filtro1:
+    projetos_selecionados = st.multiselect("Selecione um projeto", df['Projeto'].unique())
+with col_filtro2:
+    data_inicio = st.date_input("Data de Início", df['Data de Término'].min().date())
+    data_fim = st.date_input("Data de Fim", df['Data de Término'].max().date())
 
-# Filtro por data de término
-min_date = df['Data de Término'].min().date()
-max_date = df['Data de Término'].max().date()
-data_inicio, data_fim = st.slider(
-    "Selecione o período de término dos projetos",
-    min_value=min_date,
-    max_value=max_date,
-    value=(min_date, max_date),
-    format="DD/MM/YYYY"
-)
+# Botão para limpar filtros
+if st.button("Limpar Filtros"):
+    projetos_selecionados = []
+    data_inicio = df['Data de Término'].min().date()
+    data_fim = df['Data de Término'].max().date()
 
 # Aplicar filtros
 df_filtrado = df.copy()
@@ -78,13 +76,14 @@ fig_setor = px.bar(setor_counts, x='Setor', y='Quantidade',
                    title="Projetos por Setor")
 col3.plotly_chart(fig_setor, use_container_width=True)
 
-# Projetos por Ano de Término
-ano_counts = df_filtrado['Ano de Término'].value_counts().reset_index()
-ano_counts.columns = ['Ano', 'Quantidade']
-fig_ano = px.bar(ano_counts, x='Ano', y='Quantidade',
-                 labels={'Ano': 'Ano', 'Quantidade': 'Quantidade'},
-                 title="Projetos por Ano de Término")
-col4.plotly_chart(fig_ano, use_container_width=True)
+# Evolução Mensal de Projetos
+mes_counts = df_filtrado['Mês de Término'].value_counts().reset_index()
+mes_counts.columns = ['Mês', 'Quantidade']
+mes_counts = mes_counts.sort_values(by='Mês')
+fig_mes = px.line(mes_counts, x='Mês', y='Quantidade', markers=True,
+                  labels={'Mês': 'Mês', 'Quantidade': 'Quantidade'},
+                  title="Evolução Mensal de Projetos")
+col4.plotly_chart(fig_mes, use_container_width=True)
 
 # Exibição da tabela filtrada
 st.subheader("📋 Dados Detalhados")
