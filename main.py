@@ -15,7 +15,7 @@ df['Ano de Término'] = pd.to_numeric(df['Data de Término'].dt.year, errors='co
 df['Mês de Término'] = df['Data de Término'].dt.to_period('M').astype(str)
 
 # Configuração do Streamlit
-st.set_page_config(page_title="Dashboard de Projetos", layout="wide")
+st.set_page_config(page_title="Dashboard de Projetos", page_icon="assets/favicon.ico", layout="wide")
 
 # Título do dashboard
 st.title("📊 Dashboard de Projetos")
