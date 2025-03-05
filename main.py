@@ -1,8 +1,6 @@
 import plotly.express as px
-from dash import Dash, html, dcc, Input, Output
-import dash_bootstrap_components as dbc
-import pandas as pd
 import streamlit as st
+import pandas as pd
 
 # Carregando os dados
 df = pd.read_csv('Projetos.csv')
@@ -12,127 +10,64 @@ df['Status'] = df['Status'].fillna('Não Definido')
 df['Prioridade'] = df['Prioridade'].fillna('Não Definida')
 df['Atualizado por'] = df['Atualizado por'].fillna('Não Definido')
 df['Data de Início'] = df['Data de Início'].fillna('Não informado')
-
 df['Data de Término'] = pd.to_datetime(df['Data de Término'], errors='coerce')
-
 df['Ano de Término'] = df['Data de Término'].dt.year.fillna('Não informado')
 
-# Iniciando a aplicação Dash
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# Configuração do Streamlit
+st.set_page_config(page_title="Dashboard de Projetos", layout="wide")
 
-# Layout da aplicação
-app.layout = dbc.Container([
-    dbc.Row([
-        dbc.Col(html.H1("Dashboard de Projetos"), className="mb-2 mt-2")
-    ]),
-    dbc.Row([
-        dbc.Col([
-            dcc.Dropdown(
-                id='filtro_projeto',
-                options=[{'label': projeto, 'value': projeto} for projeto in df['Projeto'].unique()],
-                placeholder='Selecione um projeto',
-                multi=True  # Permite selecionar múltiplos projetos
-            ),
-        ], width=12)
-    ]),
-    dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("Projetos Concluídos", className="card-title"),
-                    html.H2(id="projetos_concluidos", className="card-text"),
-                ])
-            ], className="mb-4")
-        ], width=4),
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("Projetos por Prioridade", className="card-title"),
-                    dcc.Graph(id="grafico_prioridade")
-                ])
-            ], className="mb-4")
-        ], width=8)
-    ]),
-    dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("Projetos por Status", className="card-title"),
-                    dcc.Graph(id="grafico_status")
-                ])
-            ], className="mb-4")
-        ], width=6),
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("Projetos por Setor", className="card-title"),
-                    dcc.Graph(id="grafico_setor")
-                ])
-            ], className="mb-4")
-        ], width=6)
-    ]),
-    dbc.Row([
-        dbc.Col([
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("Distribuição por Ano de Término", className="card-title"),
-                    dcc.Graph(id="grafico_ano")
-                ])
-            ], className="mb-4")
-        ], width=12)
-    ])
-], fluid=True)
+# Título do dashboard
+st.title("📊 Dashboard de Projetos")
 
-# Callback para atualizar os gráficos e KPIs com base no filtro
-@app.callback(
-    [Output('projetos_concluidos', 'children'),
-     Output('grafico_prioridade', 'figure'),
-     Output('grafico_status', 'figure'),
-     Output('grafico_setor', 'figure'),
-     Output('grafico_ano', 'figure')],
-    [Input('filtro_projeto', 'value')]
-)
-def atualizar_dashboard(projetos_selecionados):
-    # Filtrando os dados
-    if projetos_selecionados:
-        df_filtrado = df[df['Projeto'].isin(projetos_selecionados)]
-    else:
-        df_filtrado = df
+# Filtro por projeto
+projetos_selecionados = st.multiselect("Selecione um projeto", df['Projeto'].unique())
 
-    # Quantidade de Projetos Concluídos
-    projetos_concluidos = df_filtrado[df_filtrado['Status'] == 'Concluído'].shape[0]
+# Aplicar filtro
+if projetos_selecionados:
+    df_filtrado = df[df['Projeto'].isin(projetos_selecionados)]
+else:
+    df_filtrado = df
 
-    # Gráfico de projetos por prioridade
-    fig_prioridade = px.bar(df_filtrado['Prioridade'].value_counts().reset_index(),
-                            x='index', y='Prioridade',
-                            labels={'index': 'Prioridade', 'Prioridade': 'Quantidade'},
-                            title="Projetos por Prioridade")
+# KPIs
+col1, col2 = st.columns(2)
+col1.metric("📌 Total de Projetos", df_filtrado.shape[0])
+col2.metric("✅ Projetos Concluídos", df_filtrado[df_filtrado['Status'] == 'Concluído'].shape[0])
 
-    # Gráfico de projetos por status
-    fig_status = px.pie(df_filtrado['Status'].value_counts().reset_index(),
-                        names='index', values='Status',
-                        title="Projetos por Status")
+# Gráficos
+st.subheader("📌 Distribuição de Projetos")
+col1, col2 = st.columns(2)
 
-    # Gráfico de projetos por setor
-    fig_setor = px.bar(df_filtrado['Setor'].value_counts().reset_index(),
-                       x='index', y='Setor',
-                       labels={'index': 'Setor', 'Setor': 'Quantidade'},
-                       title="Projetos por Setor")
+# Projetos por Prioridade
+fig_prioridade = px.bar(df_filtrado['Prioridade'].value_counts().reset_index(),
+                        x='index', y='Prioridade',
+                        labels={'index': 'Prioridade', 'Prioridade': 'Quantidade'},
+                        title="Projetos por Prioridade")
+col1.plotly_chart(fig_prioridade, use_container_width=True)
 
-    # Gráfico de distribuição por ano de término
-    fig_ano = px.bar(df_filtrado['Ano de Término'].value_counts().reset_index(),
-                     x='index', y='Ano de Término',
-                     labels={'index': 'Ano', 'Ano de Término': 'Quantidade'},
-                     title="Projetos por Ano de Término")
+# Projetos por Status
+fig_status = px.pie(df_filtrado['Status'].value_counts().reset_index(),
+                    names='index', values='Status',
+                    title="Distribuição por Status")
+col2.plotly_chart(fig_status, use_container_width=True)
 
-    return projetos_concluidos, fig_prioridade, fig_status, fig_setor, fig_ano
+# Gráficos adicionais
+st.subheader("📌 Outras Análises")
+col3, col4 = st.columns(2)
 
-# Rodando a aplicação Dash
-if __name__ == '__main__':
-    app.run_server(debug=False, use_reloader=False, port=8050)
+# Projetos por Setor
+fig_setor = px.bar(df_filtrado['Setor'].value_counts().reset_index(),
+                   x='index', y='Setor',
+                   labels={'index': 'Setor', 'Setor': 'Quantidade'},
+                   title="Projetos por Setor")
+col3.plotly_chart(fig_setor, use_container_width=True)
 
-# Streamlit para exibir o Dash dentro da aplicação
-st.title("Dashboard de Projetos")
+# Projetos por Ano de Término
+fig_ano = px.bar(df_filtrado['Ano de Término'].value_counts().reset_index(),
+                 x='index', y='Ano de Término',
+                 labels={'index': 'Ano', 'Ano de Término': 'Quantidade'},
+                 title="Projetos por Ano de Término")
+col4.plotly_chart(fig_ano, use_container_width=True)
 
-# Exibir o Dash dentro do Streamlit via iframe
-st.components.v1.iframe("http://localhost:8050", height=800, scrolling=True)
+# Exibição da tabela filtrada
+st.subheader("📋 Dados Detalhados")
+st.dataframe(df_filtrado)
