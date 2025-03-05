@@ -13,6 +13,9 @@ df['Data de Início'] = df['Data de Início'].fillna('Não informado')
 df['Data de Término'] = pd.to_datetime(df['Data de Término'], errors='coerce')
 df['Ano de Término'] = df['Data de Término'].dt.year.fillna('Não informado')
 
+# Converter 'Ano de Término' para inteiro, removendo valores inválidos
+df['Ano de Término'] = pd.to_numeric(df['Ano de Término'], errors='coerce').fillna(0).astype(int)
+
 # Configuração do Streamlit
 st.set_page_config(page_title="Dashboard de Projetos", layout="wide")
 
@@ -30,7 +33,7 @@ data_inicio, data_fim = st.slider(
     min_value=min_date,
     max_value=max_date,
     value=(min_date, max_date),
-    format="DD-MM-YYYY"
+    format="DD/MM/YYYY"
 )
 
 # Aplicar filtros
