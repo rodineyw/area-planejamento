@@ -30,7 +30,7 @@ data_inicio, data_fim = st.slider(
     min_value=min_date,
     max_value=max_date,
     value=(min_date, max_date),
-    format="%d/%m/%Y"
+    format="DD-MM-YYYY"
 )
 
 # Aplicar filtros
