@@ -1,7 +1,8 @@
-import pandas as pd
 import plotly.express as px
-import dash_bootstrap_components as dbc
 from dash import Dash, html, dcc, Input, Output
+import dash_bootstrap_components as dbc
+import pandas as pd
+import streamlit as st
 
 # Carregando os dados
 df = pd.read_csv('Projetos.csv')
@@ -126,6 +127,12 @@ def atualizar_dashboard(projetos_selecionados):
 
     return projetos_concluidos, fig_prioridade, fig_status, fig_setor, fig_ano
 
-# Rodando a aplicação
+# Rodando a aplicação Dash
 if __name__ == '__main__':
     app.run_server(debug=False, use_reloader=False, port=8050)
+
+    # Streamlit para exibir o Dash dentro da aplicação
+    st.title("Dashboard de Projetos")
+
+    # Exibir o Dash dentro do Streamlit via iframe
+    st.components.v1.iframe("http://localhost:8050", height=800, scrolling=True)
