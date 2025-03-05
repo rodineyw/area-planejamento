@@ -8,7 +8,7 @@ from threading import Thread
 
 # Configurar o dashboard em modo wide
 st.set_page_config(
-    page_title="Tarefas - Preâmbulo Financeiro",
+    page_title="Dashboard de Projetos",
     page_icon="assets/favicon.ico",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -18,12 +18,12 @@ st.set_page_config(
 # Função para atualizar os dados
 def atualizar_dados():
     try:
-        df = pd.read_csv('Hub Financeiro.csv')
+        df = pd.read_csv('Projetos.csv')
         st.session_state['df'] = df
         print('Dados Atualizados')
     except FileNotFoundError:
         st.error(
-            "O arquivo 'Hub Financeiro.csv' não foi encontrado. Verifique o caminho do arquivo.")
+            "O arquivo 'Projetos.csv' não foi encontrado. Verifique o caminho do arquivo.")
 
 
 # Funçaõ para rodar o scheduler em um thread separado
@@ -59,7 +59,7 @@ if st.session_state["authenticated"]:
     else:
         st.write("Você está no modo de visualização como Visitante.")
 
-    file_path = 'Hub Financeiro.csv'
+    file_path = 'Projetos.csv'
     try:
         df = pd.read_csv(file_path)
 

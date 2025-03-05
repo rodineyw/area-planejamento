@@ -128,4 +128,4 @@ def atualizar_dashboard(projetos_selecionados):
 
 # Rodando a aplicação
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False, use_reloader=False, port=8050)
