@@ -1,0 +1,70 @@
+﻿Projeto,Setor,Descrição,Prioridade,Status,Data de Início,Data de Término,Atualizado por
+Atualização do Depara,Cobrança,"Atualização do ""de/para"" no reporte diário de acionamentos – Itaú",Alta,Concluído,,28/02/2025,Rodiney Wanderson
+Metas por Diretoria e Regional,Cobrança,Geração do reporte com metas por diretoria e regional – Bradesco,Alta,Concluído,,27/03/2025,Rodiney Wanderson
+Atualização do Estoque,Cobrança,Atualização do estoque LPCL de fevereiro – Bradesco,Alta,Concluído,,26/02/2025,Rodiney Wanderson
+Prestação de Contas,Cobrança,Prestação de  contas- Nordeste 1 - Bradesco,Alta,Concluído,,24/02/2025,Rodiney Wanderson
+Telefones HOT,Cobrança,Inclusão da base de telefones Hot disponibilizados pelo Bradesco no CPJ-NEGOCIAL,Médio,Concluído,,24/02/2025,Rodiney Wanderson
+Reporte Diário,Cobrança,Reporte diário dos acionamentos realizados – Negocial Bradesco,Alta,Concluído,,24/02/2025,Rodiney Wanderson
+Criação de novas situações dentro do workflow 9,"CPJ, Preâmbulo","Foram criadas novas situações nos eventos sob o workflow 9, para que novos encadeamentos fossem possíveis. Acordo e Parcial. Isso possibilita relatórios mais assertivos.",Alta,Concluído,10/01/2025,20/01/2025,Victor Perez
+Atualização manual de registros inseridos com erro,CPJ,"Foram concertados manualmente vários registros inseridos com erro manualmente, pois se fosse enviado a Preambulo, seríamos cobrados. Isso impactava na forma de atualização dos cadastros, sendo que com o erro, não é possível seguir cadastrando.",Alta,Concluído,27/02/2025,27/02/2025,Victor Perez
+Relatório Financeiro Cálculo via código,CPJ,"Código de SQL que realiza diversos cálculos, onde o excel é gerado com os cálculos já realizados",Médio,Concluído,22/01/2025,23/01/2025,Victor Perez
+Workflow equipe Leandro,CPJ,"Implementação do Workflow na equipe, extração dos eventos e alimentação do Dashboard.
+Workflow concluído e em execução, indicadores já estão sendo usados no Projuris.",Médio,Concluído,20/11/2024,20/11/2024,Rodiney Wanderson
+RELATÓRIO BRADESCO - PRÉ AJUIZAMENTO,CPJ,Criação de alguns relatórios para verificar as pendências de documentação para a equipe de pré ajuizamento,Médio,Concluído,11/11/2024,14/11/2024,Victor Perez
+ADEQUAÇÃO CLIENTE SICOOB,CPJ,"Mapear os fluxos, mapear os indicadores e atos que geram honorários. Falar com as equipes afim de montar a integração.",Alta,Concluído,10/12/2024,09/01/2025,Rodiney Wanderson
+Robô de Deferimento em Lote,"Desenvolvimento, Financeiro",Robô que imita as ações do usuário e realiza o Deferimento em lote conforme a planilha gerado pela equipe do BackOffice.,Médio,Concluído,03/06/2024,17/09/2024,Rodiney Wanderson
+Workflow - Sicoob Jurídico,"CPJ, Desenvolvimento","Fluxo em andamento, juntamente com clientes menores que estão em responsabilidade da Advogada Andreia Miranda Ramos",Alta,Concluído,14/08/2024,19/08/2024,Rodiney Wanderson
+Programa de Batimento,"Ativo, Desenvolvimento","Programa realiza um PROCV entre dois arquivos, seja Excel, .CSV ou JSON, e realiza a correção das UF com base no numero do processo",Médio,Concluído,01/08/2024,05/08/2024,Rodiney Wanderson
+Status de Carga,"Ativo, Desenvolvimento","Aplicativo que analisa a base de dados e compara com a carga, para identificar o que precisa ser cadastrado. (Melhorias a serem implementadas.)",Alta,Concluído,24/07/2024,25/07/2024,Rodiney Wanderson
+Robô de Baixar Documentos em Lote,"Desenvolvimento, Financeiro","Desenvolvimento de robô que baixa comprovante e guia em lote direto do CPJ-3C, através do ID Tramitação e Sigla do Evento (Robô precisa identificar Incidentes e baixar)
+Robô já identifica o incidente com base no ID Tramitação.",Médio,Concluído,24/07/2024,25/09/2024,Rodiney Wanderson
+Robô Fatura/Boleto,"Desenvolvimento, Financeiro",Robô que anexa Fatura e Boletos direto na aba Contas a Pagar,Médio,Concluído,06/03/2024,17/09/2024,Rodiney Wanderson
+Robô de Comprovante,"Desenvolvimento, Financeiro","Robô que salva os comprovantes de pagamento, direto na aba de Contas a Pagar dentro do CPJ-3C",Médio,Concluído,14/02/2024,17/09/2024,Rodiney Wanderson
+Relatório Clientes Ativo Fontecred/Finamax,"Ativo, CPJ","Relatório automático, de clientes ativo que é encaminhado diretamente para o cliente Fontecred e Finamax",Baixa,Concluído,12/03/2024,12/03/2024,Rodiney Wanderson
+Relatório Honorários Fontecred/Finamax,"Ativo, CPJ","Relatório automático, de honorários que é encaminhado diretamente para o cliente Fontecred e Finamax",Baixa,Concluído,12/03/2024,13/03/2024,Rodiney Wanderson
+Gerenciador de PDF,"Ativo, Desenvolvimento","Incluir opção de salvar comprovantes de PDF conforme os dados da planilha, onde será verificado o numero do PJ + Valor, e o programa renomeia conforme os dados da planilha, agora o programa assina arquivo PDF e protege com senha definida pelo usuario.",Alta,Concluído,25/06/2024,02/03/2025,Rodiney Wanderson
+Consulta CNPJ,Desenvolvimento,"Programa que efetua a consulta do CNPJ da empresa direto da Receita Federal, utilizando a API Gratuita da Receita Federal.",Médio,Concluído,13/06/2024,14/06/2024,Rodiney Wanderson
+Transcrever Áudio em Texto,"Ativo, Desenvolvimento","Foi desenvolvido um programa, onde o colaborador seleciona a gravação da ligação do cobrança, para que seja convertido em texto e o colaborador possa apenas pesquisar por palavra-chave",Médio,Concluído,21/06/2024,24/06/2024,Rodiney Wanderson
+FLUXO DE MANDADOS - ITAÚ,CPJ,Alterar o workflow de mandado para permitir reagendado porque ele está poluindo a linha do tempo na tramitação,Baixa,Concluído,,,Victor Perez
+ALTERAR PONTUAÇÕES - VIJUD,"CPJ, Desenvolvimento, Preâmbulo","Alterar a tabela Z de eventos do banco, mudaram várias pontuações / Resolvido",Alta,Concluído,01/07/2024,08/07/2024,Rodiney Wanderson
+Honorários Fontecred/Finamax,CPJ,"Complemento do Texto - Inibir os Honorários Já cobrados. 
+No momento não é possível realizar essa alteração, analisando outra estratégia.",Baixa,Concluído,,15/11/2024,Rodiney Wanderson
+HONORÁRIOS - FONTECRED/FINAMAX,CPJ,Realizar relatório financeiro a partir do evento de solicitação de honorários,Baixa,Concluído,14/02/2024,28/02/2024,Rodiney Wanderson
+RESULTADOS - IMP/META ITAU,"CPJ, Desenvolvimento",Forma mais fácil para visualizar o resultado de qualquer período,Alta,Concluído,,,Rodiney Wanderson
+WORKFLOW ITAÚ/IMP,"Ativo, CPJ","Workflow já está em uso, porém devido alteração na pontuação do IMP, é preciso realizar alterações no CPJ e Relatórios.",Alta,Concluído,21/06/2024,23/07/2024,Rodiney Wanderson
+MONITORAMENTO - TERMOS,"CPJ, Preâmbulo",Monitoramento de termos diretamente dos TJs/ Finalizado,Alta,Concluído,05/06/2024,28/06/2024,Victor Perez
+WORKFLOW RECOVERY,"Ativo, CPJ","Realizar treinamento com Gestora da carteira, projeto de encadeamento já em funcionamento",Baixa,Concluído,27/05/2024,31/05/2024,Rodiney Wanderson
+Relatório - Cumprimento de Agenda,CPJ,Finalizar performance do relatório. Aguardando realização de testes das equipes,Baixa,Concluído,28/05/2024,29/05/2024,Victor Perez
+WORKFLOW FINAMAX/FONTECRED,"CPJ, Desenvolvimento","Realizar mapeamento, treinamento Gestora e implementar na equipe, Workflow em execução. Realizando Alterações de correções e melhorias",Baixa,Concluído,19/08/2024,21/08/2024,Rodiney Wanderson
+Relatório Enel - RIO,"Ativo, CPJ","Relatório automatizado com as informações de andamento, sendo gerado semanalmente para o cliente Enel RIO",Baixa,Concluído,14/02/2024,14/02/2024,Rodiney Wanderson
+WORKFLOW ORIGINAL,Desenvolvimento,"Finalizar mapeamento, treinar gestora e implantar. Equipe já passou pelo treinamento, workflow em execução.",Baixa,Concluído,01/06/2024,16/08/2024,Rodiney Wanderson
+Compartilhamento de Metas,Cobrança,Compartilhamento das metas e resultados com todos os envolvidos a partir de março para as carteiras Itaú Jud e Bradesco,Alta,Em andamento,05/03/2025,,Rodiney Wanderson
+Dashboard por Negocizador,Cobrança,Habilitação do dashboard de acionamentos por negociador no CPJ-Cobrança - Aguardando retorno da Preâmbulo,Alta,Em andamento,28/02/2025,,Rodiney Wanderson
+Verificação e Análise de desempenho do CPJ para Alta Disponibilidade,"CPJ, Preâmbulo",Análise de desempenho da versão em homologação do CPJ para verificar gaps para que a Leviatan migre nosso servidor em nuvem para Alta Disponibilidade,Alta,Em andamento,24/02/2025,,Victor Perez
+Criação de réplica de banco de dados de homologação,"CPJ, Preâmbulo","A criação será feita com comandos de DML em SQL, que possibilitará todo tipo de atualizações em lote, criação de triggers e automações. O que fará que o setor dependa menos da Preâmbulo",Médio,Em andamento,27/02/2025,,Victor Perez
+Criação de ficha para o localizador,CPJ,"Extração de ficha de localizador feita diretamente pelo CPJ, já com as informações pertinentes. Aguardando reunião com a equipe para apresentar o trabalho já realizado.",Médio,Em andamento,10/10/2024,,Victor Perez
+Gerenciador de Token/Certificados,"CPJ, Preâmbulo","Um gerenciador que realiza a organização dos usuários que possuem acesso ao certificado do Dr. Marcio, onde é possível conceder poderes diversos a cada usuário",Médio,Em andamento,10/12/2024,,Victor Perez
+RCB EXECUÇÃO - CRIAÇÃO DE FLUXO,CPJ,"Luci não conseguiu participar da primeira reunião. Solicitei outro horário em 24/09, aguardando resposta / Ainda sem resposta, alega não ter tempo para a realização da reunião",Alta,Em andamento,02/09/2024,,Victor Perez
+FLUXO PARA A EQUIPE LOCALIZAÇÃO,CPJ,"Criação de fluxo para a equipe de localização. 
+Fluxo definido com a equipe, e parametrização do Dashboard em desenvolvimento",,Em andamento,10/10/2024,19/02/2025,Rodiney Wanderson
+RCB - CRIAÇÃO DE FLUXO,CPJ,"Realizada a primeira reunião, porém infrutífera. O fluxo usado atualmente não permite o bom uso do CPJ. Será necessário conversar mais para verificar a melhor forma de realizar esse fluxo.",Médio,Em andamento,08/07/2024,,Victor Perez
+BSC - Dashboard,Cobrança,"Desenvolver Dashboard com os dados do BSC para disponibilizar externamente ao Banco Itaú. 
+Equipe não faz uso do sistema para lançar os dados, dificultando a extração e tratamento dos dados.",Médio,Em andamento,26/09/2024,,Rodiney Wanderson
+VIJUD VS IMP CPJ,"Ativo, CPJ","Comparativo para confirmar se estamos com a Base igual ao da Vijud, para que possamos acompanhar a Meta do IMP.",Médio,Em andamento,20/09/2024,,Rodiney Wanderson
+"Carga de Arquivo ","CPJ, Desenvolvimento","Carga dos arquivos referente a Processo e Cobrança, recebemos dos clientes em formatação e tipo de arquivo variados, precisamos receber e padronizar para nosso layout",Alta,Em andamento,16/09/2024,,Rodiney Wanderson
+FLUXO DE SPF PELA AGENDA,"Financeiro, Preâmbulo","Ainda em testes. A ideia é que algumas SPFs não passem pelo Financeiro. Ex; adiantamentos
+Já em fase final, o fluxo vai ser mais rápido e depender menos do setor financeiro para pagamentos de guias.",Médio,Em andamento,11/12/2023,,Victor Perez
+COBRANÇA - HONORÁRIOS,"Ativo, CPJ","Cobrar honorários mais corretamente, com melhores fluxos e utilizar mais o setor de honorários (backoffice)  - Aguardando definição do Alessandro",Alta,Em andamento,,,Victor Perez
+WORKFLOW BRADESCO,"Ativo, CPJ","Realizar treinamento das Gestoras de equipe, e iniciar implementação. No aguardo das classificações de publicação. Foram feitas 3 reuniões, e em todas após a construção do fluxo, fora solicitadas alterações. Alterações foram solicitadas mesmo após a implementação.",Alta,Em andamento,02/05/2024,,Victor Perez
+Petição por IA,Desenvolvimento,"IA que lê os dados do Formulário preenchidos pela Bonnie e Tamires, Cria a petição com base no tipo de Tese e anexa no CPJ para que Aline Andrade e Larissa realizem o checagem para confirmar se está correto. ",Médio,Não iniciada,22/11/2024,,Rodiney Wanderson
+IMÓVEIS - ITAÚ / CAMPOS Z,"CPJ, Preâmbulo","Informações de imóveis do Itaú, ajudando na integração com o Cobrança. Criar campos Z",Alta,Não iniciada,,,Victor Perez
+ROBÔ ANDAMENTOS - PJUR,"CPJ, Preâmbulo",TI - Digitrix / VPN bloqueada,Médio,Não iniciada,,,Rodiney Wanderson
+API/ROBÔ - SALVAR DOCS EM LOTE,"CPJ, Financeiro, Preâmbulo","Salvar comprovantes de pagamento de guias em lote no módulo CPR. - Em análise com a Preâmbulo, mas fora do roadmap",Alta,Não iniciada,,,Victor Perez
+TIME-SHEET,"CPJ, Preâmbulo",Contagem de minutos em que cada colaborador permanece na tarefa - necessitamos melhorar o fluxo de todos os workflows,Baixa,Não iniciada,,,Victor Perez
+AGNES,"CPJ, Preâmbulo","Automatizador de peças jurídicas, orientado para gerar as peças a partir de perguntas e respostas, com padrão estabelecido pelo escritório",Baixa,Não iniciada,,,Victor Perez
+Web Scraping do TJ nacional,Desenvolvimento,"Web Scraping realiza a raspagem dos dados direto do TJ de todo território nacional, trás os andamentos do processo e permite que o  Advogado lance no CPJ manual ou via Robô em lote. (Em desenvolvimento, é preciso obter acesso das plataformas e executar testes.)",Alta,Cancelado,31/08/2024,,Rodiney Wanderson
+Gerador de Arquivo CNAB,"Desenvolvimento, Financeiro","Programa efetua a leitura da planilha do Excel com informações de pagamento, e converte em arquivo CNAB 240",Alta,Cancelado,17/01/2024,,Rodiney Wanderson
+SANEAMENTO RECOVERY,CPJ,"1. BASE TODA COM AS PALAVRAS CHAVE DE ARQUIVAMENTO
+2. ÚLTIMO ANDAMENTO DA BASE
+(DEVOLVEMOS O CLIENTE)",Alta,Cancelado,,,Victor Perez
+ROBÔ ANDAMENTOS - GCPJ,"CPJ, Preâmbulo",Victor/Rod - aguardando as equipes enviarem média/ assinatura Alessandro,Alta,Cancelado,,,Victor Perez

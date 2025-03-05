@@ -1,15 +1,20 @@
-import plotly.express as px
-from dash import Dash, html, dcc, Input, Output
-import dash_bootstrap_components as dbc
 import pandas as pd
+import plotly.express as px
+import dash_bootstrap_components as dbc
+from dash import Dash, html, dcc, Input, Output
 
 # Carregando os dados
-df = pd.read_csv('Hub Financeiro.csv')
+df = pd.read_csv('Projetos.csv')
 
 # Limpeza de dados
 df['Status'] = df['Status'].fillna('Não Definido')
 df['Prioridade'] = df['Prioridade'].fillna('Não Definida')
-df['Responsável'] = df['Responsável'].fillna('Não Definido')
+df['Atualizado por'] = df['Atualizado por'].fillna('Não Definido')
+df['Data de Início'] = df['Data de Início'].fillna('Não informado')
+
+df['Data de Término'] = pd.to_datetime(df['Data de Término'], errors='coerce')
+
+df['Ano de Término'] = df['Data de Término'].dt.year.fillna('Não informado')
 
 # Iniciando a aplicação Dash
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -17,16 +22,15 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 # Layout da aplicação
 app.layout = dbc.Container([
     dbc.Row([
-        dbc.Col(html.H1("Dashboard Financeiro"), className="mb-2 mt-2")
+        dbc.Col(html.H1("Dashboard de Projetos"), className="mb-2 mt-2")
     ]),
     dbc.Row([
         dbc.Col([
             dcc.Dropdown(
-                id='filtro_tarefa',
-                options=[{'label': tarefa, 'value': tarefa}
-                         for tarefa in df['Tarefa'].unique()],
-                placeholder='Selecione uma tarefa',
-                multi=True  # Permite selecionar múltiplas tarefas
+                id='filtro_projeto',
+                options=[{'label': projeto, 'value': projeto} for projeto in df['Projeto'].unique()],
+                placeholder='Selecione um projeto',
+                multi=True  # Permite selecionar múltiplos projetos
             ),
         ], width=12)
     ]),
@@ -34,15 +38,15 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H4("Tarefas Concluídas", className="card-title"),
-                    html.H2(id="tarefas_concluidas", className="card-text"),
+                    html.H4("Projetos Concluídos", className="card-title"),
+                    html.H2(id="projetos_concluidos", className="card-text"),
                 ])
             ], className="mb-4")
         ], width=4),
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H4("Tarefas por Prioridade", className="card-title"),
+                    html.H4("Projetos por Prioridade", className="card-title"),
                     dcc.Graph(id="grafico_prioridade")
                 ])
             ], className="mb-4")
@@ -52,7 +56,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H4("Tarefas por Status", className="card-title"),
+                    html.H4("Projetos por Status", className="card-title"),
                     dcc.Graph(id="grafico_status")
                 ])
             ], className="mb-4")
@@ -60,8 +64,8 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H4("Tarefas por Responsável", className="card-title"),
-                    dcc.Graph(id="grafico_responsavel")
+                    html.H4("Projetos por Setor", className="card-title"),
+                    dcc.Graph(id="grafico_setor")
                 ])
             ], className="mb-4")
         ], width=6)
@@ -70,9 +74,8 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H4("Distribuição por Projeto",
-                            className="card-title"),
-                    dcc.Graph(id="grafico_projeto")
+                    html.H4("Distribuição por Ano de Término", className="card-title"),
+                    dcc.Graph(id="grafico_ano")
                 ])
             ], className="mb-4")
         ], width=12)
@@ -80,62 +83,49 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 # Callback para atualizar os gráficos e KPIs com base no filtro
-
-
 @app.callback(
-    [Output('tarefas_concluidas', 'children'),
+    [Output('projetos_concluidos', 'children'),
      Output('grafico_prioridade', 'figure'),
      Output('grafico_status', 'figure'),
-     Output('grafico_responsavel', 'figure'),
-     Output('grafico_projeto', 'figure')],
-    [Input('filtro_tarefa', 'value')]
+     Output('grafico_setor', 'figure'),
+     Output('grafico_ano', 'figure')],
+    [Input('filtro_projeto', 'value')]
 )
-def atualizar_dashboard(tarefas_selecionadas):
+def atualizar_dashboard(projetos_selecionados):
     # Filtrando os dados
-    if tarefas_selecionadas:
-        df_filtrado = df[df['Tarefa'].isin(tarefas_selecionadas)]
+    if projetos_selecionados:
+        df_filtrado = df[df['Projeto'].isin(projetos_selecionados)]
     else:
         df_filtrado = df
 
-    # Atualizando KPI 1: Quantidade de Tarefas Concluídas
-    tarefas_concluidas = df_filtrado[df_filtrado['Status']
-                                     == 'Concluída'].shape[0]
+    # Quantidade de Projetos Concluídos
+    projetos_concluidos = df_filtrado[df_filtrado['Status'] == 'Concluído'].shape[0]
 
-    # Atualizando gráfico de tarefas por prioridade
-    tarefas_por_prioridade = df_filtrado['Prioridade'].value_counts(
-    ).reset_index()
-    tarefas_por_prioridade.columns = ['Prioridade', 'Contagem']
-    fig_prioridade = px.bar(tarefas_por_prioridade, x='Prioridade', y='Contagem',
-                            labels={'Prioridade': 'Prioridade',
-                                    'Contagem': 'Quantidade'},
-                            title="Distribuição por Prioridade")
+    # Gráfico de projetos por prioridade
+    fig_prioridade = px.bar(df_filtrado['Prioridade'].value_counts().reset_index(),
+                            x='index', y='Prioridade',
+                            labels={'index': 'Prioridade', 'Prioridade': 'Quantidade'},
+                            title="Projetos por Prioridade")
 
-    # Atualizando gráfico de tarefas por status
-    tarefas_por_status = df_filtrado['Status'].value_counts().reset_index()
-    tarefas_por_status.columns = ['Status', 'Contagem']
-    fig_status = px.pie(tarefas_por_status, names='Status', values='Contagem',
-                        title="Distribuição por Status")
+    # Gráfico de projetos por status
+    fig_status = px.pie(df_filtrado['Status'].value_counts().reset_index(),
+                        names='index', values='Status',
+                        title="Projetos por Status")
 
-    # Atualizando gráfico de tarefas por responsável
-    tarefas_por_responsavel = df_filtrado['Responsável'].value_counts(
-    ).reset_index()
-    tarefas_por_responsavel.columns = ['Responsável', 'Contagem']
-    fig_responsavel = px.bar(tarefas_por_responsavel, x='Responsável', y='Contagem',
-                             labels={'Responsável': 'Responsável',
-                                     'Contagem': 'Quantidade'},
-                             title="Distribuição por Responsável")
+    # Gráfico de projetos por setor
+    fig_setor = px.bar(df_filtrado['Setor'].value_counts().reset_index(),
+                       x='index', y='Setor',
+                       labels={'index': 'Setor', 'Setor': 'Quantidade'},
+                       title="Projetos por Setor")
 
-    # Atualizando gráfico de tarefas por projeto
-    tarefas_por_projeto = df_filtrado['Projeto'].value_counts().reset_index()
-    tarefas_por_projeto.columns = ['Projeto', 'Contagem']
-    fig_projeto = px.bar(tarefas_por_projeto, x='Projeto', y='Contagem',
-                         labels={'Projeto': 'Projeto',
-                                 'Contagem': 'Quantidade'},
-                         title="Distribuição por Projeto")
+    # Gráfico de distribuição por ano de término
+    fig_ano = px.bar(df_filtrado['Ano de Término'].value_counts().reset_index(),
+                     x='index', y='Ano de Término',
+                     labels={'index': 'Ano', 'Ano de Término': 'Quantidade'},
+                     title="Projetos por Ano de Término")
 
-    return tarefas_concluidas, fig_prioridade, fig_status, fig_responsavel, fig_projeto
+    return projetos_concluidos, fig_prioridade, fig_status, fig_setor, fig_ano
 
-
-# Rodando a aplicação localmente
+# Rodando a aplicação
 if __name__ == '__main__':
     app.run_server(debug=True)
