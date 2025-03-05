@@ -131,8 +131,8 @@ def atualizar_dashboard(projetos_selecionados):
 if __name__ == '__main__':
     app.run_server(debug=False, use_reloader=False, port=8050)
 
-    # Streamlit para exibir o Dash dentro da aplicação
-    st.title("Dashboard de Projetos")
+# Streamlit para exibir o Dash dentro da aplicação
+st.title("Dashboard de Projetos")
 
-    # Exibir o Dash dentro do Streamlit via iframe
-    st.components.v1.iframe("http://localhost:8050", height=800, scrolling=True)
+# Exibir o Dash dentro do Streamlit via iframe
+st.components.v1.iframe("http://localhost:8050", height=800, scrolling=True)
