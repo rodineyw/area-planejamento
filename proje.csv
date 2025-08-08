@@ -137,15 +137,14 @@ Viagem e Cotação,"A ideia seria extrair valores de viagens direto da Web, apó
 Workflow - Recursais/Sucumbência,"Workflow de permissões para não permitir que decisões que podem gerar valores de sucumbencias sejam tratadas de forma errada, com confirmação dos gestores",Alta,CPJ,TODOS,Em andamento,06/08/2025,,Victor,Victor Quaresma
 Reestruturação CPJs,"Criar projeto que envolve os dois sistemas, em relação as nomenclaturas e padrões de dados dentro dos sistemas, projeto deve ser iniciado para ser executado no recesso",Médio,"CPJ, Cobrança",TODOS,Não iniciada,07/08/2025,,"Michele, Victor",Victor Quaresma
 Integração SICOOB,-,Alta,"CPJ, Cobrança",SICOOB JUD,Concluído,21/07/2025,31/07/2025,"Camila, Jackson, Michele, Sabrine, Victor",Victor Quaresma
-Integração ENEL SP/RJ,-,Alta,,,,,,,Victor Quaresma
-INTEGRAÇÃO BANCO ABC,-,,,,,,,,Victor Quaresma
-Projeto Oficial Whatsapp Bradesco,,,,,,,,,Victor Quaresma
-Bate-Carteira Bradesco,,,,,,,,,Victor Quaresma
-Ajuste de Lay-Out,,,,"Itaú ADM, Itaú JUD",,,,,Victor Quaresma
-Envio de Publicações CREDITAS,,,,,,,,,Victor Quaresma
+Integração ENEL SP/RJ,-,Alta,Cobrança,"Enel RIO, Enel SP",Concluído,11/08/2025,22/08/2025,"Camila, Jackson, Sabrine",Victor Quaresma
+INTEGRAÇÃO BANCO ABC,-,Alta,"CPJ, Cobrança",Banco ABC,Em andamento,14/07/2025,15/08/2025,"Jackson, Sabrine, Victor",Victor Quaresma
+Projeto Oficial Whatsapp Bradesco,,Alta,Cobrança,"Bradesco BA, Bradesco JUD",Em andamento,05/08/2025,,"Jackson, Sabrine",Victor Quaresma
+Bate-Carteira Bradesco,,Alta,Cobrança,"Bradesco BA, Bradesco JUD",Em andamento,06/01/2025,,"Jackson, Patricia, Sabrine",Victor Quaresma
+Envio de Publicações CREDITAS,,Alta,CPJ,Creditas BA,Concluído,08/08/2025,08/08/2025,Victor,Victor Quaresma
 Batimento de de Carga Itaú,"Robô identifica processos antigos na base de dados, e realiza o comparativo com a VIJUD vigente, para identificar processos de quebra de acordo e notificar as Gestora da carteira, para que retorne a atuação com urgência ",Alta,"CPJ, Cobrança, Desenvolvimento",Itaú JUD,Em andamento,29/07/2025,,Ródiney,Perez de Rezende Advogados
 Agente Virtual de Negociação,,Alta,Cobrança,"Itaú ADM, Natura, RCB Busca",Em andamento,28/07/2025,,Camila,Victor Quaresma
-Acompanhamento de Acordos - RCB,,Médio,Cobrança,"Itapeva, RCB Busca",Não iniciada,04/08/2025,,,Victor Quaresma
+Acompanhamento de Acordos - RCB,,Médio,Cobrança,"Itapeva, RCB Busca",Em andamento,24/06/2025,,"Jackson, Victor",Victor Quaresma
 Substabelecimento Creditas,"Processos cedidos para outros escritório na Carteira Creditas, Lançamento de: 
 - Lembrete.
 - Evento de Tombado.
