@@ -280,8 +280,8 @@ else:
 # =========================
 # LOGS (opcional)
 # =========================
-with st.expander("Ver últimos logs"):
-    try:
-        st.code(Path(LOG_PATH).read_text(encoding="utf-8")[-4000:])
-    except Exception:
-        st.write("Sem logs ainda.")
+# with st.expander("Ver últimos logs"):
+#     try:
+#         st.code(Path(LOG_PATH).read_text(encoding="utf-8")[-4000:])
+#     except Exception:
+#         st.write("Sem logs ainda.")
