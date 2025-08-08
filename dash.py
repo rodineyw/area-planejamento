@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 
 # Carregando os dados
-df = pd.read_csv('Projetos.csv')
+df = pd.read_csv('proje.csv')
 
 # Limpeza de dados
 df['Status'] = df['Status'].fillna('Não Definido')
