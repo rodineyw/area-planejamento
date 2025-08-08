@@ -268,7 +268,7 @@ else:
 # =========================
 st.subheader("📋 Dados Detalhados")
 cols_exibir = []
-for c in ["Projeto", "Status", "Prioridade", "Setor", "Atualizado por", "Data de Início_BR", "Data de Término_BR"]:
+for c in ["Projeto", "Status", "Prioridade", "Setor", "Responsável", "Data de Início", "Data de Término"]:
     if c in df_filtrado.columns:
         cols_exibir.append(c)
 
