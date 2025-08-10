@@ -267,13 +267,20 @@ else:
 # TABELA (com datas em pt-BR)
 # =========================
 st.subheader("📋 Dados Detalhados")
-cols_exibir = []
-for c in ["Projeto", "Status", "Prioridade", "Setor", "Responsável", "Data de Início", "Data de Término"]:
-    if c in df_filtrado.columns:
-        cols_exibir.append(c)
+
+df_view = df_filtrado.copy()
+
+for col in ["Data de Início", "Data de Término"]:
+    if col in df_view.columns:
+        # garante datetime e aplica formato pt-BR; NaT vira vazio
+        df_view[col] = pd.to_datetime(df_view[col], errors="coerce", dayfirst=True)\
+                           .dt.strftime("%d/%m/%Y").fillna("")
+
+cols_exibir = [c for c in ["Projeto","Status","Prioridade","Setor","Atualizado por",
+                           "Data de Início","Data de Término"] if c in df_view.columns]
 
 if cols_exibir:
-    st.dataframe(df_filtrado[cols_exibir], use_container_width=True)
+    st.dataframe(df_view[cols_exibir], use_container_width=True)
 else:
     st.info("Sem colunas para exibir nessa visão.")
 
