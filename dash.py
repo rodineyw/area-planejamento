@@ -39,15 +39,13 @@ if not logger.handlers:
 log = logger.info
 
 # ============== ENV / NOTION (robusto) ==============
-# 1) tenta achar e carregar .env onde quer que esteja
 _ = load_dotenv(find_dotenv(usecwd=True), override=False)
-# 2) lê env OU st.secrets como fallback
+
 def get_cred(name: str) -> str:
     v = os.getenv(name, "").strip()
     if not v:
         try:
-            v = st.secrets[name]  # opcional: .streamlit/secrets.toml
-            v = (v or "").strip()
+            v = (st.secrets[name] or "").strip()
         except Exception:
             v = ""
     return v
@@ -60,24 +58,24 @@ def sanitize_db_id(raw: str) -> str:
 NOTION_TOKEN = get_cred("NOTION_TOKEN")
 NOTION_DB    = sanitize_db_id(get_cred("NOTION_DATABASE_ID"))
 
-def _mask(s: str, keep=8):
-    if not s: return "None"
-    return (s[:keep] + "…" + s[-2:]) if len(s) > keep+2 else "***"
+if not NOTION_TOKEN or not NOTION_DB:
+    st.error("Configure NOTION_TOKEN e NOTION_DATABASE_ID (apenas 32 hex).")
+    st.stop()
 
-# 3) valida token e acesso antes de rodar
+# valida token e DB
 try:
     _client = Client(auth=NOTION_TOKEN)
-    me = _client.users.me()  # valida token
+    _ = _client.users.me()
 except APIResponseError as e:
-    st.error(f"Token inválido ou sem escopo. Reemita em *My integrations* e garanta que começa com `secret_...`.\nDetalhe: {e}")
+    st.error(f"Token inválido ou sem permissão. Reemita e cole exatamente como fornecido pelo Notion.\nDetalhe: {e}")
     st.stop()
 
 try:
-    _client.databases.retrieve(database_id=NOTION_DB)  # valida DB e acesso
+    _client.databases.retrieve(database_id=NOTION_DB)
 except APIResponseError as e:
     st.error("Falha ao acessar o **Database**. Confira:\n"
-             "• O ID é do **database** (não page) e tem 32 hex (sem `?v=`)\n"
-             "• No Notion: abra o DB → **Add connections** → selecione sua integração\n"
+             "• ID é do **database** (não page) e tem 32 hex (sem `?v=`)\n"
+             "• No Notion: DB → **Add connections** → selecione sua integração\n"
              f"Detalhe: {e}")
     st.stop()
 
@@ -112,10 +110,32 @@ def _get_people(p):
 
 def _to_date(d):
     if not isinstance(d, dict): return None, None
-    def _p(x): 
+    def _p(x):
         try: return pd.to_datetime(x).date() if x else None
         except Exception: return None
     return _p(d.get("start")), _p(d.get("end"))
+
+def get_date_bounds(df):
+    if "Data de Término" in df.columns and df["Data de Término"].notna().any():
+        return df["Data de Término"].min().date(), df["Data de Término"].max().date()
+    return date(2000,1,1), date.today()
+
+def ensure_filter_state(df):
+    data_min, data_max = get_date_bounds(df)
+    ss = st.session_state
+    ss.setdefault("k_status", sorted(df["Status"].dropna().unique().tolist()) if "Status" in df.columns else [])
+    ss.setdefault("k_prioridade", sorted(df["Prioridade"].dropna().unique().tolist()) if "Prioridade" in df.columns else [])
+    ss.setdefault("k_setor", sorted(df["Setor"].dropna().unique().tolist()) if "Setor" in df.columns else [])
+    ss.setdefault("k_texto", "")
+    ss.setdefault("k_dataini", data_min)
+    ss.setdefault("k_datafim", data_max)
+    ss.setdefault("k_incluir_sem_data", True)
+    # clamp
+    ss.k_dataini = max(min(ss.k_dataini, data_max), data_min)
+    ss.k_datafim = max(min(ss.k_datafim, data_max), data_min)
+    if ss.k_dataini > ss.k_datafim:
+        ss.k_dataini, ss.k_datafim = data_min, data_max
+    return data_min, data_max
 
 # ============== LOAD FROM NOTION ==============
 @st.cache_data(show_spinner=True, ttl=300)
@@ -146,11 +166,11 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
         def _val(prop):
             if not prop or prop not in props: return None
             t = props[prop]["type"]
-            if t == "select":      return (props[prop]["select"] or {}).get("name")
-            if t == "status":      return (props[prop]["status"] or {}).get("name")
-            if t == "multi_select":return ", ".join([x.get("name","") for x in (props[prop]["multi_select"] or []) if x.get("name")])
-            if t == "rich_text":   return _get_text(props[prop]["rich_text"])
-            if t == "people":      return _get_people(props[prop]["people"])
+            if t == "select":       return (props[prop]["select"] or {}).get("name")
+            if t == "status":       return (props[prop]["status"] or {}).get("name")
+            if t == "multi_select": return ", ".join([x.get("name","") for x in (props[prop]["multi_select"] or []) if x.get("name")])
+            if t == "rich_text":    return _get_text(props[prop]["rich_text"])
+            if t == "people":       return _get_people(props[prop]["people"])
             return None
 
         status = _val(p_Status) or "Não Definido"
@@ -187,40 +207,22 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
     log(f"Notion: linhas={len(df)} | projetos únicos={df['Projeto'].nunique() if not df.empty else 0} | NaT término={df['Data de Término'].isna().sum() if 'Data de Término' in df.columns else '-'}")
     return df
 
-# botão atualizar
+# botão atualizar (limpa só cache de dados)
 if st.sidebar.button("🔄 Atualizar do Notion agora"):
-    load_from_notion.clear(); st.rerun()
+    load_from_notion.clear()
+    st.rerun()
 
 # carrega
 df = load_from_notion(NOTION_DB)
 
 # ============== SIDEBAR (filtros) ==============
 st.sidebar.markdown("## ⚙️ Filtros")
+# garante estado SEMPRE antes de acessar keys
+data_min, data_max = ensure_filter_state(df)
+
 status_opts = sorted(df["Status"].dropna().unique().tolist()) if "Status" in df.columns else []
 priori_opts = sorted(df["Prioridade"].dropna().unique().tolist()) if "Prioridade" in df.columns else []
 setor_opts  = sorted(df["Setor"].dropna().unique().tolist()) if "Setor" in df.columns else []
-
-if "defaults_set" not in st.session_state:
-    st.session_state.k_status = status_opts.copy()
-    st.session_state.k_prioridade = priori_opts.copy()
-    st.session_state.k_setor = setor_opts.copy()
-    st.session_state.k_texto = ""
-    if df["Data de Término"].notna().any():
-        data_min = df["Data de Término"].min().date(); data_max = df["Data de Término"].max().date()
-    else:
-        data_min, data_max = date(2000,1,1), date.today()
-    st.session_state.k_dataini = data_min; st.session_state.k_datafim = data_max
-    st.session_state.k_incluir_sem_data = True
-    st.session_state.defaults_set = True
-
-if df["Data de Término"].notna().any():
-    data_min = df["Data de Término"].min().date(); data_max = df["Data de Término"].max().date()
-else:
-    data_min, data_max = date(2000,1,1), date.today()
-st.session_state.k_dataini = max(min(st.session_state.k_dataini, data_max), data_min)
-st.session_state.k_datafim = max(min(st.session_state.k_datafim, data_max), data_min)
-if st.session_state.k_dataini > st.session_state.k_datafim:
-    st.session_state.k_dataini, st.session_state.k_datafim = data_min, data_max
 
 status_sel = st.sidebar.multiselect("Status", options=status_opts, key="k_status")
 priori_sel = st.sidebar.multiselect("Prioridade", options=priori_opts, key="k_prioridade")
@@ -235,8 +237,7 @@ if st.sidebar.button("♻️ Limpar filtros"):
     st.session_state.k_prioridade = priori_opts.copy()
     st.session_state.k_setor = setor_opts.copy()
     st.session_state.k_texto = ""
-    st.session_state.k_dataini = data_min
-    st.session_state.k_datafim = data_max
+    st.session_state.k_dataini, st.session_state.k_datafim = data_min, data_max
     st.session_state.k_incluir_sem_data = True
     st.rerun()
 
@@ -348,11 +349,5 @@ for col in ["Data de Início", "Data de Término"]:
 cols_exibir = [c for c in ["Projeto","Status","Prioridade","Setor","Atualizado por","Data de Início","Data de Término","Ano de Término","Mês de Término Nome"] if c in df_view.columns]
 if cols_exibir:
     st.dataframe(df_view[cols_exibir], use_container_width=True, height=420)
-    # csv_bytes = df_view[cols_exibir].to_csv(index=False).encode("utf-8-sig")
-    # st.download_button("⬇️ Baixar CSV filtrado", data=csv_bytes, file_name="projetos_filtrado.csv", mime="text/csv")
 else:
     st.info("Sem colunas para exibir nessa visão.")
-
-# with st.expander("Ver últimos logs"):
-#     try: st.code(Path(LOG_PATH).read_text(encoding="utf-8")[-4000:])
-#     except Exception: st.write("Sem logs ainda.")
