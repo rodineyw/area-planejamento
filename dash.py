@@ -335,7 +335,7 @@ for col in ["Data de Início", "Data de Término"]:
         df_view[col] = pd.to_datetime(df_view[col], errors="coerce", dayfirst=True)\
                           .dt.strftime("%d/%m/%Y").fillna("")
 
-cols_exibir = [c for c in ["Projeto","Status","Prioridade","Setor","Atualizado por",
+cols_exibir = [c for c in ["Projeto","Status","Prioridade","Setor","Responsável",
                            "Data de Início","Data de Término","Ano de Término","Mês de Término"]
                if c in df_view.columns]
 
