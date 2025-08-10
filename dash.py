@@ -101,7 +101,7 @@ def load_data(csv_path: str) -> pd.DataFrame:
 
     return df
 
-CSV_PATH = "proje.csv"
+CSV_PATH = "projetos.csv"
 df = load_data(CSV_PATH)
 
 # =========================
