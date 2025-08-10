@@ -17,16 +17,15 @@ st.set_page_config(
 )
 
 # =========================
-# TEMA/ESTILO (CSS simples p/ “cara de produto”)
+# TEMA/ESTILO (KPI auto light/dark + ajustes visuais)
 # =========================
 st.markdown("""
 <style>
-/* fonte e cores suaves */
 html, body, [class*="css"]  { font-family: Inter, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
 .block-container { padding-top: 1rem; padding-bottom: 0.5rem; }
 h1, h2, h3 { letter-spacing: 0.2px; }
 
-/* cards de KPI */
+/* --- KPI base (light como default) --- */
 .kpi {
   background: #ffffff;
   border: 1px solid #e9ecef;
@@ -35,16 +34,28 @@ h1, h2, h3 { letter-spacing: 0.2px; }
   box-shadow: 0 2px 10px rgba(0,0,0,.04);
 }
 .kpi .label { color: #6c757d; font-size: 0.85rem; margin-bottom: 6px; }
-.kpi .value { font-weight: 700; font-size: 1.6rem; }
+.kpi .value { font-weight: 700; font-size: 1.6rem; color: #212529; }
 
-/* subtítulo seção */
+/* --- Adaptação automática para tema escuro do sistema --- */
+@media (prefers-color-scheme: dark) {
+  .kpi {
+    background: #121212;
+    border-color: #2a2a2a;
+    box-shadow: 0 2px 14px rgba(0,0,0,.5);
+  }
+  .kpi .label { color: #b0b0b0; }
+  .kpi .value { color: #f1f3f5; }
+}
+
+/* Subtítulos + tabela compacta */
 .section-title {
   margin-top: 0.8rem; margin-bottom: 0.2rem;
   font-weight: 700; font-size: 1.05rem; color: #495057;
   text-transform: uppercase; letter-spacing: .06em;
 }
-
-/* tabela mais compacta */
+@media (prefers-color-scheme: dark) {
+  .section-title { color: #d0d4d9; }
+}
 [data-testid="stDataFrame"] div[role="gridcell"] { font-size: 0.9rem; }
 </style>
 """, unsafe_allow_html=True)
@@ -87,11 +98,11 @@ def load_data(csv_path: str) -> pd.DataFrame:
             df[col] = df[col].replace({"nan": None, "None": None, "": None})
             df[col] = df[col].fillna("Não Definido")
 
-    # projeto sem nome não some do filtro
+    # projeto sem nome não some do relatório
     if "Projeto" in df.columns:
         df["Projeto"] = df["Projeto"].replace({"Não Definido": "(Sem nome)"})
 
-    # datas como datetime (sem strings enfiadas na coluna)
+    # datas como datetime (sem strings na coluna)
     for dcol in ["Data de Início", "Data de Término"]:
         if dcol in df.columns:
             df[dcol] = pd.to_datetime(df[dcol], errors="coerce", dayfirst=True)
@@ -109,7 +120,6 @@ def load_data(csv_path: str) -> pd.DataFrame:
         df["PeriodoMes"] = pd.NA
         df["Mês de Término Nome"] = pd.NA
 
-    # logs
     log(f"carregado: {len(df)} linhas | projetos únicos={df['Projeto'].nunique() if 'Projeto' in df.columns else 0} | NaT término={df['Data de Término'].isna().sum() if 'Data de Término' in df.columns else '-'}")
     return df
 
@@ -117,54 +127,67 @@ CSV_PATH = "projetos.csv"
 df = load_data(CSV_PATH)
 
 # =========================
-# SIDEBAR (FILTROS)
+# SIDEBAR (FILTROS) — sem filtro por Projeto
 # =========================
 st.sidebar.markdown("## ⚙️ Filtros")
 
-# projetos (com “selecionar tudo”)
-projetos_unicos = sorted(df["Projeto"].dropna().unique().tolist()) if "Projeto" in df.columns else []
-sel_all = st.sidebar.checkbox("Selecionar todos os projetos", value=True)
-if sel_all:
-    projetos_sel = st.sidebar.multiselect("Projetos", options=projetos_unicos, default=projetos_unicos)
-else:
-    projetos_sel = st.sidebar.multiselect("Projetos", options=projetos_unicos, default=[])
-
-# filtros adicionais (tipo Power BI)
 status_opts = sorted(df["Status"].dropna().unique().tolist()) if "Status" in df.columns else []
 priori_opts = sorted(df["Prioridade"].dropna().unique().tolist()) if "Prioridade" in df.columns else []
 setor_opts  = sorted(df["Setor"].dropna().unique().tolist()) if "Setor" in df.columns else []
 
-status_sel   = st.sidebar.multiselect("Status", options=status_opts, default=status_opts)
-priori_sel   = st.sidebar.multiselect("Prioridade", options=priori_opts, default=priori_opts)
-setor_sel    = st.sidebar.multiselect("Setor", options=setor_opts, default=setor_opts)
-
-# busca textual
-texto_busca = st.sidebar.text_input("Buscar (Projeto / Atualizado por)", "")
-
-# período (data de término)
 if "Data de Término" in df.columns and df["Data de Término"].notna().any():
     data_min = df["Data de Término"].min().date()
     data_max = df["Data de Término"].max().date()
 else:
     data_min, data_max = pd.Timestamp("2000-01-01").date(), pd.Timestamp.today().date()
 
-data_ini = st.sidebar.date_input("Data inicial (Término)", value=data_min, min_value=data_min, max_value=data_max)
-data_fim = st.sidebar.date_input("Data final (Término)", value=data_max, min_value=data_min, max_value=data_max)
+# --- defaults guardados na sessão (uma única vez) ---
+if "defaults_set" not in st.session_state:
+    st.session_state.k_status = status_opts.copy()
+    st.session_state.k_prioridade = priori_opts.copy()
+    st.session_state.k_setor = setor_opts.copy()
+    st.session_state.k_texto = ""
+    st.session_state.k_dataini = data_min
+    st.session_state.k_datafim = data_max
+    st.session_state.k_incluir_sem_data = True
+    st.session_state.defaults_set = True
 
-incluir_sem_data = st.sidebar.checkbox("Incluir itens sem Data de Término", value=True)
+# --- widgets COM keys ---
+status_sel = st.sidebar.multiselect("Status", options=status_opts, default=st.session_state.k_status, key="k_status")
+priori_sel = st.sidebar.multiselect("Prioridade", options=priori_opts, default=st.session_state.k_prioridade, key="k_prioridade")
+setor_sel  = st.sidebar.multiselect("Setor", options=setor_opts, default=st.session_state.k_setor, key="k_setor")
 
-# botão reset
+texto_busca = st.sidebar.text_input("Buscar (campo 'Atualizado por')", value=st.session_state.k_texto, key="k_texto")
+
+# garante limites válidos
+if st.session_state.k_dataini < data_min or st.session_state.k_dataini > data_max:
+    st.session_state.k_dataini = data_min
+if st.session_state.k_datafim  < data_min or st.session_state.k_datafim  > data_max:
+    st.session_state.k_datafim = data_max
+if st.session_state.k_dataini > st.session_state.k_datafim:
+    st.session_state.k_dataini, st.session_state.k_datafim = data_min, data_max
+
+data_ini = st.sidebar.date_input("Data inicial", value=st.session_state.k_dataini, min_value=data_min, max_value=data_max, key="k_dataini")
+data_fim = st.sidebar.date_input("Data final",   value=st.session_state.k_datafim,  min_value=data_min, max_value=data_max, key="k_datafim")
+
+incluir_sem_data = st.sidebar.checkbox("Incluir itens sem Data de Término", value=st.session_state.k_incluir_sem_data, key="k_incluir_sem_data")
+
+# --- botão reset: zera sessão e rerun (sem mexer no cache de dados) ---
 if st.sidebar.button("♻️ Limpar filtros"):
-    st.cache_data.clear()
-    st.experimental_rerun()
+    st.session_state.k_status = status_opts.copy()
+    st.session_state.k_prioridade = priori_opts.copy()
+    st.session_state.k_setor = setor_opts.copy()
+    st.session_state.k_texto = ""
+    st.session_state.k_dataini = data_min
+    st.session_state.k_datafim = data_max
+    st.session_state.k_incluir_sem_data = True
+    st.rerun()
 
 # =========================
 # APLICA FILTROS
 # =========================
 df_f = df.copy()
 
-if projetos_sel:
-    df_f = df_f[df_f["Projeto"].isin(projetos_sel)]
 
 if status_sel:
     df_f = df_f[df_f["Status"].isin(status_sel)]
@@ -175,14 +198,9 @@ if priori_sel:
 if setor_sel:
     df_f = df_f[df_f["Setor"].isin(setor_sel)]
 
-if texto_busca.strip():
+if texto_busca.strip() and "Atualizado por" in df_f.columns:
     t = texto_busca.strip().lower()
-    mask = False
-    cols_busca = [c for c in ["Projeto", "Atualizado por"] if c in df_f.columns]
-    for c in cols_busca:
-        m = df_f[c].astype(str).str.lower().str.contains(t, na=False)
-        mask = m if isinstance(mask, bool) else (mask | m)
-    df_f = df_f[mask]
+    df_f = df_f[df_f["Atualizado por"].astype(str).str.lower().str.contains(t, na=False)]
 
 if "Data de Término" in df_f.columns:
     with_data = df_f["Data de Término"].notna()
@@ -191,13 +209,12 @@ if "Data de Término" in df_f.columns:
     else:
         df_f = df_f[with_data & (df_f["Data de Término"].dt.date >= data_ini) & (df_f["Data de Término"].dt.date <= data_fim)]
 
-log(f"após filtros: {len(df_f)} linhas | proj={len(projetos_sel)}/{len(projetos_unicos)} | incluir_sem_data={incluir_sem_data}")
+log(f"após filtros: {len(df_f)} linhas | incluir_sem_data={incluir_sem_data}")
 
 # =========================
 # CABEÇALHO
 # =========================
-st.title("📊 Dashboard de Projetos")
-st.caption("Visual analítica com filtros estilo Power BI, datas em pt-BR e gráficos organizados.")
+st.title("📊 Dash - Área de Planejamento")
 
 # =========================
 # KPIs (cards)
@@ -222,7 +239,7 @@ for col, label, value in [
 st.markdown(f'<div class="section-title">Última Data de Término: {ult_termino_br}</div>', unsafe_allow_html=True)
 
 # =========================
-# PALETA/ESTILO PLOTLY
+# PLOTLY TEMPLATE + PALETA
 # =========================
 px.defaults.template = "plotly_white"
 PALETA = px.colors.qualitative.Set2
@@ -242,7 +259,7 @@ else:
     g1.info("Sem dados de Prioridade.")
 
 # =========================
-# VISUAL 2: Status (pizza/donut)
+# VISUAL 2: Status (donut)
 # =========================
 if "Status" in df_f.columns and not df_f.empty:
     s_counts = df_f["Status"].value_counts(dropna=False).reset_index()
@@ -292,7 +309,6 @@ else:
 st.markdown('<div class="section-title">Timeline (Gantt)</div>', unsafe_allow_html=True)
 if {"Projeto","Data de Início","Data de Término"}.issubset(df_f.columns):
     gantt = df_f.dropna(subset=["Data de Início","Data de Término"]).copy()
-    # evita linhas invertidas
     gantt = gantt[gantt["Data de Término"] >= gantt["Data de Início"]]
     if not gantt.empty:
         fig_g = px.timeline(
@@ -325,7 +341,6 @@ cols_exibir = [c for c in ["Projeto","Status","Prioridade","Setor","Atualizado p
 
 if cols_exibir:
     st.dataframe(df_view[cols_exibir], use_container_width=True, height=420)
-    # download filtrado
     # csv_bytes = df_view[cols_exibir].to_csv(index=False).encode("utf-8-sig")
     # st.download_button("⬇️ Baixar CSV filtrado", data=csv_bytes, file_name="projetos_filtrado.csv", mime="text/csv")
 else:
