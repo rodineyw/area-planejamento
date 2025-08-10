@@ -1,6 +1,7 @@
 # app.py
 from pathlib import Path
 import os, re, logging
+import locale
 from logging.handlers import RotatingFileHandler
 from datetime import date
 import pandas as pd
@@ -10,8 +11,16 @@ from notion_client import Client
 from notion_client.errors import APIResponseError
 from dotenv import load_dotenv, find_dotenv
 
+try:
+    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+except locale.Error:
+    try:
+        locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil')
+    except locale.Error:
+        st.warning("⚠️ Não foi possível definir o locale para pt_BR, meses podem aparecer em inglês.")
+
 # ============== STREAMLIT ==============
-st.set_page_config(page_title="Dashboard de Projetos", page_icon="📊", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Dashboard - Área de Planejamento", page_icon="📊", layout="wide", initial_sidebar_state="expanded")
 st.markdown("""
 <style>
 html, body, [class*="css"]{font-family:Inter,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
