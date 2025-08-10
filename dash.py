@@ -260,8 +260,7 @@ if "Data de Término" in df_f.columns:
 log(f"após filtros: linhas={len(df_f)} | incluir_sem_data={incluir_sem_data}")
 
 # ============== CABEÇALHO + KPIs ==============
-st.title("📊 Dashboard de Projetos — Notion")
-st.caption("Dados do Notion (botão ‘Atualizar’ na sidebar). Datas em pt-BR e visual estilo Power BI.")
+st.title("📊 Dashboard - Área de Planejamento")
 
 c1, c2, c3, c4 = st.columns(4)
 total_reg = len(df_f)
