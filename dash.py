@@ -11,6 +11,7 @@ from notion_client import Client
 from notion_client.errors import APIResponseError
 from dotenv import load_dotenv, find_dotenv
 
+# ------ Locale PT-BR para nomes de meses ------
 try:
     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 except locale.Error:
@@ -216,39 +217,43 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
     log(f"Notion: linhas={len(df)} | projetos únicos={df['Projeto'].nunique() if not df.empty else 0} | NaT término={df['Data de Término'].isna().sum() if 'Data de Término' in df.columns else '-'}")
     return df
 
-# botão atualizar (limpa só cache de dados)
-if st.sidebar.button("🔄 Atualizar do Notion agora"):
+# -------- Botão ÚNICO de atualizar (key dedicada) --------
+if st.sidebar.button("🔄 Atualizar do Notion agora", key="btn_refresh_notion"):
     load_from_notion.clear()
     st.rerun()
 
-# carrega
+# -------- Carrega dados --------
 df = load_from_notion(NOTION_DB)
 
 # ============== SIDEBAR (filtros) ==============
 st.sidebar.markdown("## ⚙️ Filtros")
-# garante estado SEMPRE antes de acessar keys
 data_min, data_max = ensure_filter_state(df)
 
 status_opts = sorted(df["Status"].dropna().unique().tolist()) if "Status" in df.columns else []
 priori_opts = sorted(df["Prioridade"].dropna().unique().tolist()) if "Prioridade" in df.columns else []
 setor_opts  = sorted(df["Setor"].dropna().unique().tolist()) if "Setor" in df.columns else []
 
-status_sel = st.sidebar.multiselect("Status", options=status_opts, key="k_status")
-priori_sel = st.sidebar.multiselect("Prioridade", options=priori_opts, key="k_prioridade")
-setor_sel  = st.sidebar.multiselect("Setor", options=setor_opts, key="k_setor")
-texto_busca = st.sidebar.text_input("Buscar (campo 'Atualizado por')", key="k_texto")
-data_ini = st.sidebar.date_input("Data inicial (Término)", min_value=data_min, max_value=data_max, key="k_dataini")
-data_fim = st.sidebar.date_input("Data final (Término)",   min_value=data_min, max_value=data_max, key="k_datafim")
-incluir_sem_data = st.sidebar.checkbox("Incluir itens sem Data de Término", key="k_incluir_sem_data")
-
-if st.sidebar.button("♻️ Limpar filtros"):
-    st.session_state.k_status = status_opts.copy()
-    st.session_state.k_prioridade = priori_opts.copy()
-    st.session_state.k_setor = setor_opts.copy()
-    st.session_state.k_texto = ""
-    st.session_state.k_dataini, st.session_state.k_datafim = data_min, data_max
-    st.session_state.k_incluir_sem_data = True
+# callback para limpar filtros (key dedicada)
+def _reset_filters():
+    ss = st.session_state
+    ss.k_status = status_opts[:]
+    ss.k_prioridade = priori_opts[:]
+    ss.k_setor = setor_opts[:]
+    ss.k_texto = ""
+    ss.k_dataini, ss.k_datafim = data_min, data_max
+    ss.k_incluir_sem_data = True
     st.rerun()
+
+st.sidebar.button("♻️ Limpar filtros", on_click=_reset_filters, key="btn_reset_filters")
+
+# widgets
+status_sel   = st.sidebar.multiselect("Status",     options=status_opts, key="k_status")
+priori_sel   = st.sidebar.multiselect("Prioridade", options=priori_opts, key="k_prioridade")
+setor_sel    = st.sidebar.multiselect("Setor",      options=setor_opts,  key="k_setor")
+texto_busca  = st.sidebar.text_input("Buscar (campo 'Atualizado por')", key="k_texto")
+data_ini     = st.sidebar.date_input("Data inicial (Término)", min_value=data_min, max_value=data_max, key="k_dataini")
+data_fim     = st.sidebar.date_input("Data final (Término)",   min_value=data_min, max_value=data_max, key="k_datafim")
+incluir_sem_data = st.sidebar.checkbox("Incluir itens sem Data de Término", key="k_incluir_sem_data")
 
 # ============== FILTROS ==============
 df_f = df.copy()
