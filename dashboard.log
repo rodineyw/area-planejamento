@@ -8,3 +8,9 @@
 2025-08-10 14:24:27,393 | INFO | após filtros: linhas=152 | incluir_sem_data=True
 2025-08-10 14:40:11,692 | INFO | Notion: linhas=152 | projetos únicos=152 | NaT término=74
 2025-08-10 14:40:11,703 | INFO | após filtros: linhas=152 | incluir_sem_data=True
+2025-08-11 10:41:02,479 | INFO | Notion: linhas=152 | projetos únicos=152 | NaT término=74
+2025-08-11 10:41:02,703 | INFO | após filtros: linhas=152 | incluir_sem_data=True
+2025-08-11 10:42:25,870 | INFO | após filtros: linhas=78 | incluir_sem_data=False
+2025-08-11 10:43:07,125 | INFO | após filtros: linhas=29 | incluir_sem_data=False
+2025-08-11 10:48:36,095 | INFO | Notion: linhas=152 | projetos únicos=152 | NaT término=74
+2025-08-11 10:48:36,103 | INFO | após filtros: linhas=64 | incluir_sem_data=True
