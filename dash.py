@@ -96,6 +96,7 @@ PROP_MAP = {
     "Prioridade": ["Prioridade"],
     "Atualizado por": ["Atualizado por", "Responsável", "Owner"],
     "Setor": ["Setor", "Área"],
+    "Cliente": ["Cliente", "Client", "Cliente/Empresa", "Empresa"],
     "Data de Início": ["Data de Início", "Inicio", "Start"],
     "Data de Término": ["Data de Término", "Termino", "Fim", "End"],
 }
@@ -136,6 +137,7 @@ def ensure_filter_state(df):
     ss.setdefault("k_status", sorted(df["Status"].dropna().unique().tolist()) if "Status" in df.columns else [])
     ss.setdefault("k_prioridade", sorted(df["Prioridade"].dropna().unique().tolist()) if "Prioridade" in df.columns else [])
     ss.setdefault("k_setor", sorted(df["Setor"].dropna().unique().tolist()) if "Setor" in df.columns else [])
+    ss.setdefault("k_cliente", sorted(df["Cliente"].dropna().unique().tolist()) if "Cliente" in df.columns else [])
     ss.setdefault("k_texto", "")
     ss.setdefault("k_dataini", data_min)
     ss.setdefault("k_datafim", data_max)
@@ -166,6 +168,7 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
         p_Prior   = _match_prop(props, PROP_MAP["Prioridade"])
         p_Atual   = _match_prop(props, PROP_MAP["Atualizado por"])
         p_Setor   = _match_prop(props, PROP_MAP["Setor"])
+        p_Cliente = _match_prop(props, PROP_MAP["Cliente"])
         p_DataI   = _match_prop(props, PROP_MAP["Data de Início"])
         p_DataT   = _match_prop(props, PROP_MAP["Data de Término"])
 
@@ -176,17 +179,19 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
         def _val(prop):
             if not prop or prop not in props: return None
             t = props[prop]["type"]
-            if t == "select":       return (props[prop]["select"] or {}).get("name")
-            if t == "status":       return (props[prop]["status"] or {}).get("name")
-            if t == "multi_select": return ", ".join([x.get("name","") for x in (props[prop]["multi_select"] or []) if x.get("name")])
-            if t == "rich_text":    return _get_text(props[prop]["rich_text"])
-            if t == "people":       return _get_people(props[prop]["people"])
+            if t == "select":        return (props[prop]["select"] or {}).get("name")
+            if t == "status":        return (props[prop]["status"] or {}).get("name")
+            if t == "multi_select":  return ", ".join([x.get("name","") for x in (props[prop]["multi_select"] or []) if x.get("name")])
+            if t == "rich_text":     return _get_text(props[prop]["rich_text"])
+            if t == "people":        return _get_people(props[prop]["people"])
+            if t == "relation":      return f"{len(props[prop]['relation'] or [])} relação(ões)"
             return None
 
         status = _val(p_Status) or "Não Definido"
         prioridade = _val(p_Prior) or "Não Definida"
         atualizado_por = _val(p_Atual) or "Não Definido"
         setor = _val(p_Setor) or "Não Definido"
+        cliente = _val(p_Cliente) or "Não Definido"
 
         di, dt = None, None
         if p_DataI and props[p_DataI]["type"] == "date":
@@ -201,6 +206,7 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
             "Prioridade": prioridade,
             "Atualizado por": atualizado_por,
             "Setor": setor,
+            "Cliente": cliente,
             "Data de Início": pd.to_datetime(di) if di else pd.NaT,
             "Data de Término": pd.to_datetime(dt) if dt else pd.NaT,
         })
@@ -229,16 +235,17 @@ df = load_from_notion(NOTION_DB)
 st.sidebar.markdown("## ⚙️ Filtros")
 data_min, data_max = ensure_filter_state(df)
 
-status_opts = sorted(df["Status"].dropna().unique().tolist()) if "Status" in df.columns else []
-priori_opts = sorted(df["Prioridade"].dropna().unique().tolist()) if "Prioridade" in df.columns else []
-setor_opts  = sorted(df["Setor"].dropna().unique().tolist()) if "Setor" in df.columns else []
+status_opts  = sorted(df["Status"].dropna().unique().tolist())     if "Status"  in df.columns else []
+priori_opts  = sorted(df["Prioridade"].dropna().unique().tolist()) if "Prioridade" in df.columns else []
+setor_opts   = sorted(df["Setor"].dropna().unique().tolist())      if "Setor"   in df.columns else []
+cliente_opts = sorted(df["Cliente"].dropna().unique().tolist())    if "Cliente" in df.columns else []
 
-# callback para limpar filtros (key dedicada)
 def _reset_filters():
     ss = st.session_state
     ss.k_status = status_opts[:]
     ss.k_prioridade = priori_opts[:]
     ss.k_setor = setor_opts[:]
+    ss.k_cliente = cliente_opts[:]
     ss.k_texto = ""
     ss.k_dataini, ss.k_datafim = data_min, data_max
     ss.k_incluir_sem_data = True
@@ -247,9 +254,10 @@ def _reset_filters():
 st.sidebar.button("♻️ Limpar filtros", on_click=_reset_filters, key="btn_reset_filters")
 
 # widgets
-status_sel   = st.sidebar.multiselect("Status",     options=status_opts, key="k_status")
-priori_sel   = st.sidebar.multiselect("Prioridade", options=priori_opts, key="k_prioridade")
-setor_sel    = st.sidebar.multiselect("Setor",      options=setor_opts,  key="k_setor")
+status_sel   = st.sidebar.multiselect("Status",     options=status_opts,  key="k_status")
+priori_sel   = st.sidebar.multiselect("Prioridade", options=priori_opts,  key="k_prioridade")
+setor_sel    = st.sidebar.multiselect("Setor",      options=setor_opts,   key="k_setor")
+cliente_sel  = st.sidebar.multiselect("Cliente",    options=cliente_opts, key="k_cliente")
 texto_busca  = st.sidebar.text_input("Buscar (campo 'Atualizado por')", key="k_texto")
 data_ini     = st.sidebar.date_input("Data inicial (Término)", min_value=data_min, max_value=data_max, key="k_dataini")
 data_fim     = st.sidebar.date_input("Data final (Término)",   min_value=data_min, max_value=data_max, key="k_datafim")
@@ -257,9 +265,10 @@ incluir_sem_data = st.sidebar.checkbox("Incluir itens sem Data de Término", key
 
 # ============== FILTROS ==============
 df_f = df.copy()
-if status_sel: df_f = df_f[df_f["Status"].isin(status_sel)]
-if priori_sel: df_f = df_f[df_f["Prioridade"].isin(priori_sel)]
-if setor_sel:  df_f = df_f[df_f["Setor"].isin(setor_sel)]
+if status_sel:   df_f = df_f[df_f["Status"].isin(status_sel)]
+if priori_sel:   df_f = df_f[df_f["Prioridade"].isin(priori_sel)]
+if setor_sel:    df_f = df_f[df_f["Setor"].isin(setor_sel)]
+if cliente_sel:  df_f = df_f[df_f["Cliente"].isin(cliente_sel)]
 if texto_busca.strip() and "Atualizado por" in df_f.columns:
     t = texto_busca.strip().lower()
     df_f = df_f[df_f["Atualizado por"].astype(str).str.lower().str.contains(t, na=False)]
@@ -359,7 +368,10 @@ df_view = df_f.copy()
 for col in ["Data de Início", "Data de Término"]:
     if col in df_view.columns:
         df_view[col] = pd.to_datetime(df_view[col], errors="coerce", dayfirst=True).dt.strftime("%d/%m/%Y").fillna("")
-cols_exibir = [c for c in ["Projeto","Status","Prioridade","Setor","Atualizado por","Data de Início","Data de Término","Ano de Término","Mês de Término Nome"] if c in df_view.columns]
+cols_exibir = [c for c in [
+    "Projeto","Status","Prioridade","Setor","Cliente","Atualizado por",
+    "Data de Início","Data de Término","Ano de Término","Mês de Término Nome"
+] if c in df_view.columns]
 if cols_exibir:
     st.dataframe(df_view[cols_exibir], use_container_width=True, height=420)
 else:
