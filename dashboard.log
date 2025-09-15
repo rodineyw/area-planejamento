@@ -37,3 +37,17 @@
 2025-08-12 18:05:41,612 | INFO | após filtros: linhas=173 | incluir_sem_data=True
 2025-08-12 18:05:51,326 | INFO | Notion: linhas=173 | projetos únicos=173 | NaT término=97
 2025-08-12 18:05:51,345 | INFO | após filtros: linhas=173 | incluir_sem_data=True
+2025-09-15 17:30:36,267 | INFO | Notion: linhas=177 | projetos únicos=177 | NaT término=96
+2025-09-15 17:30:36,281 | INFO | após filtros: linhas=177 | incluir_sem_data=True
+2025-09-15 17:37:03,943 | INFO | Logo carregada: assets\logo.png
+2025-09-15 17:37:10,806 | INFO | Notion: linhas=177 | projetos únicos=177 | NaT término=96
+2025-09-15 17:37:10,852 | INFO | após filtros: linhas=177 | incluir_sem_data=True
+2025-09-15 17:39:23,250 | INFO | Logo carregada: assets\logo.png
+2025-09-15 17:39:24,527 | INFO | após filtros: linhas=177 | incluir_sem_data=True
+2025-09-15 17:42:10,624 | INFO | Token do Notion validado com sucesso.
+2025-09-15 17:42:11,183 | INFO | Database ID 1adfa1a4239c80af9fc5f51b199bb19e acessado com sucesso.
+2025-09-15 17:42:15,442 | INFO | Notion: 177 linhas carregadas. Projetos únicos: 177
+2025-09-15 17:42:15,515 | INFO | Filtros aplicados. Registros restantes: 177
+2025-09-15 17:43:05,434 | INFO | Logo carregada: assets\logo.png
+2025-09-15 17:43:10,516 | INFO | Notion: linhas=177 | projetos únicos=177 | NaT término=96
+2025-09-15 17:43:10,556 | INFO | após filtros: linhas=177 | incluir_sem_data=True

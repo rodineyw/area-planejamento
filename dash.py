@@ -1,7 +1,6 @@
 # app.py
 from pathlib import Path
 import os, re, logging
-import locale
 from logging.handlers import RotatingFileHandler
 from datetime import date
 import pandas as pd
@@ -12,25 +11,18 @@ from notion_client.errors import APIResponseError
 from dotenv import load_dotenv, find_dotenv
 from PIL import Image
 
-# ------ Locale PT-BR para nomes de meses ------
-# try:
-#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-# except locale.Error:
-#     try:
-#         locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil')
-#     except locale.Error:
-#         st.warning("⚠️ Não foi possível definir o locale para pt_BR, meses podem aparecer em inglês.")
-
-
+# ====== PATHS / ASSETS ======
 ASSETS = Path(__file__).parent / "assets"
-LOGO_PATH = ASSETS / "logo.png" 
+LOGO_PATH = ASSETS / "logo.png"
 
-# ============== STREAMLIT ==============
+# ====== STREAMLIT CONFIG ======
 st.set_page_config(
-    page_title="Área de Planejamento", 
-    page_icon=Image.open(LOGO_PATH), 
-    layout="wide", 
-    initial_sidebar_state="expanded")
+    page_title="Área de Planejamento",
+    page_icon=Image.open(LOGO_PATH) if LOGO_PATH.exists() else None,
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 st.markdown("""
 <style>
 html, body, [class*="css"]{font-family:Inter,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
@@ -48,7 +40,7 @@ html, body, [class*="css"]{font-family:Inter,-apple-system,Segoe UI,Roboto,Helve
 </style>
 """, unsafe_allow_html=True)
 
-# ============== LOGGING ==============
+# ====== LOGGING ======
 LOG_PATH = Path("dashboard.log")
 logger = logging.getLogger("proj_dash"); logger.setLevel(logging.INFO)
 if not logger.handlers:
@@ -57,7 +49,13 @@ if not logger.handlers:
     logger.addHandler(handler)
 log = logger.info
 
-# ============== ENV / NOTION (robusto) ==============
+if not LOGO_PATH.exists():
+    st.warning(f"Logo não encontrada: {LOGO_PATH}")
+    log(f"Logo ausente em {LOGO_PATH}")
+else:
+    log(f"Logo carregada: {LOGO_PATH}")
+
+# ====== ENV / NOTION ======
 _ = load_dotenv(find_dotenv(usecwd=True), override=False)
 
 def get_cred(name: str) -> str:
@@ -98,7 +96,7 @@ except APIResponseError as e:
              f"Detalhe: {e}")
     st.stop()
 
-# ============== MAPA DE PROPRIEDADES ==============
+# ====== MAPA DE PROPRIEDADES ======
 PROP_MAP = {
     "Projeto": ["Projeto", "Nome", "Title"],
     "Status": ["Status"],
@@ -110,7 +108,7 @@ PROP_MAP = {
     "Data de Término": ["Data de Término", "Termino", "Fim", "End"],
 }
 
-# ============== HELPERS ==============
+# ====== HELPERS ======
 def _match_prop(props, aliases):
     for name in props.keys():
         if name in aliases: return name
@@ -158,7 +156,7 @@ def ensure_filter_state(df):
         ss.k_dataini, ss.k_datafim = data_min, data_max
     return data_min, data_max
 
-# ============== LOAD FROM NOTION ==============
+# ====== LOAD FROM NOTION ======
 @st.cache_data(show_spinner=True, ttl=300)
 def load_from_notion(db_id: str) -> pd.DataFrame:
     rows, start_cursor = [], None
@@ -232,15 +230,17 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
     log(f"Notion: linhas={len(df)} | projetos únicos={df['Projeto'].nunique() if not df.empty else 0} | NaT término={df['Data de Término'].isna().sum() if 'Data de Término' in df.columns else '-'}")
     return df
 
-# -------- Botão ÚNICO de atualizar (key dedicada) --------
+# ====== SIDEBAR / FILTROS ======
+# st.sidebar.image(str(LOGO_PATH), width='stretch')  # logo na sidebar
+
+# ====== REFRESH ======
 if st.sidebar.button("🔄 Atualizar do Notion agora", key="btn_refresh_notion"):
     load_from_notion.clear()
     st.rerun()
 
-# -------- Carrega dados --------
+# ====== DADOS ======
 df = load_from_notion(NOTION_DB)
 
-# ============== SIDEBAR (filtros) ==============
 st.sidebar.markdown("## ⚙️ Filtros")
 data_min, data_max = ensure_filter_state(df)
 
@@ -262,7 +262,6 @@ def _reset_filters():
 
 st.sidebar.button("♻️ Limpar filtros", on_click=_reset_filters, key="btn_reset_filters")
 
-# widgets
 status_sel   = st.sidebar.multiselect("Status",     options=status_opts,  key="k_status")
 priori_sel   = st.sidebar.multiselect("Prioridade", options=priori_opts,  key="k_prioridade")
 setor_sel    = st.sidebar.multiselect("Setor",      options=setor_opts,   key="k_setor")
@@ -272,7 +271,7 @@ data_ini     = st.sidebar.date_input("Data inicial (Término)", min_value=data_m
 data_fim     = st.sidebar.date_input("Data final (Término)",   min_value=data_min, max_value=data_max, key="k_datafim")
 incluir_sem_data = st.sidebar.checkbox("Incluir itens sem Data de Término", key="k_incluir_sem_data")
 
-# ============== FILTROS ==============
+# ====== APLICA FILTROS ======
 df_f = df.copy()
 if status_sel:   df_f = df_f[df_f["Status"].isin(status_sel)]
 if priori_sel:   df_f = df_f[df_f["Prioridade"].isin(priori_sel)]
@@ -291,16 +290,13 @@ if "Data de Término" in df_f.columns:
 
 log(f"após filtros: linhas={len(df_f)} | incluir_sem_data={incluir_sem_data}")
 
-# ============== CABEÇALHO + KPIs ==============
-# Header com logo + título alinhados
+# ====== HEADER + KPIs ======
 col_logo, col_title = st.columns([1, 10])
 with col_logo:
-    st.image(str(LOGO_PATH), use_container_width=False, width=42)
+    # imagem do topo
+    st.image(str(LOGO_PATH), width='content')
 with col_title:
-    st.title("📊 Dashboard - Área de Planejamento")
-
-# Logo na sidebar
-st.sidebar.image(str(LOGO_PATH), use_container_width=True)
+    st.title("Dashboard - Área de Planejamento")
 
 c1, c2, c3, c4 = st.columns(4)
 total_reg = len(df_f)
@@ -321,7 +317,7 @@ for col, label, value in [
 
 st.markdown(f'<div class="section-title">Última Data de Término: {ult_termino_br}</div>', unsafe_allow_html=True)
 
-# ============== GRÁFICOS ==============
+# ====== GRÁFICOS ======
 px.defaults.template = "plotly_white"
 PALETA = px.colors.qualitative.Set2
 
@@ -329,28 +325,31 @@ g1, g2 = st.columns(2)
 if "Prioridade" in df_f.columns and not df_f.empty:
     p_counts = df_f["Prioridade"].value_counts(dropna=False).reset_index()
     p_counts.columns = ["Prioridade", "Quantidade"]
-    fig_p = px.bar(p_counts, x="Prioridade", y="Quantidade", color="Prioridade", color_discrete_sequence=PALETA, title="Projetos por Prioridade")
+    fig_p = px.bar(p_counts, x="Prioridade", y="Quantidade", color="Prioridade",
+                   color_discrete_sequence=PALETA, title="Projetos por Prioridade")
     fig_p.update_layout(showlegend=False, margin=dict(l=10,r=10,t=60,b=10))
-    g1.plotly_chart(fig_p, use_container_width=True)
+    g1.plotly_chart(fig_p, width='stretch')
 else:
     g1.info("Sem dados de Prioridade.")
 
 if "Status" in df_f.columns and not df_f.empty:
     s_counts = df_f["Status"].value_counts(dropna=False).reset_index()
     s_counts.columns = ["Status", "Quantidade"]
-    fig_s = px.pie(s_counts, names="Status", values="Quantidade", hole=.5, color="Status", color_discrete_sequence=PALETA, title="Distribuição por Status")
+    fig_s = px.pie(s_counts, names="Status", values="Quantidade", hole=.5, color="Status",
+                   color_discrete_sequence=PALETA, title="Distribuição por Status")
     fig_s.update_traces(textposition="inside", textinfo="percent+label")
     fig_s.update_layout(margin=dict(l=10,r=10,t=60,b=10))
-    g2.plotly_chart(fig_s, use_container_width=True)
+    g2.plotly_chart(fig_s, width='stretch')
 else:
     g2.info("Sem dados de Status.")
 
 st.markdown('<div class="section-title">Análise por Setor</div>', unsafe_allow_html=True)
 if {"Setor","Status"}.issubset(df_f.columns) and not df_f.empty:
     ct = (df_f.groupby(["Setor","Status"]).size().reset_index(name="Quantidade"))
-    fig_st = px.bar(ct, x="Setor", y="Quantidade", color="Status", barmode="stack", color_discrete_sequence=PALETA, title="Projetos por Setor (Empilhado por Status)")
+    fig_st = px.bar(ct, x="Setor", y="Quantidade", color="Status", barmode="stack",
+                    color_discrete_sequence=PALETA, title="Projetos por Setor (Empilhado por Status)")
     fig_st.update_layout(xaxis={'categoryorder':'total descending'}, margin=dict(l=10,r=10,t=60,b=10))
-    st.plotly_chart(fig_st, use_container_width=True)
+    st.plotly_chart(fig_st, width='stretch')
 else:
     st.info("Sem dados suficientes para Setor x Status.")
 
@@ -362,7 +361,7 @@ if not df_mes.empty:
     mc = mc.sort_values("PeriodoMes")
     fig_m = px.line(mc, x="Label", y="Quantidade", markers=True, title="Quantidade por Mês de Término")
     fig_m.update_layout(margin=dict(l=10,r=10,t=60,b=10))
-    st.plotly_chart(fig_m, use_container_width=True)
+    st.plotly_chart(fig_m, width='stretch')
 else:
     st.info("Sem datas de término para série temporal.")
 
@@ -371,10 +370,14 @@ if {"Projeto","Data de Início","Data de Término"}.issubset(df_f.columns):
     gantt = df_f.dropna(subset=["Data de Início","Data de Término"]).copy()
     gantt = gantt[gantt["Data de Término"] >= gantt["Data de Início"]]
     if not gantt.empty:
-        fig_g = px.timeline(gantt, x_start="Data de Início", x_end="Data de Término", y="Projeto", color="Status" if "Status" in gantt.columns else None, color_discrete_sequence=PALETA, title="Cronograma dos Projetos")
+        fig_g = px.timeline(
+            gantt, x_start="Data de Início", x_end="Data de Término", y="Projeto",
+            color="Status" if "Status" in gantt.columns else None,
+            color_discrete_sequence=PALETA, title="Cronograma dos Projetos"
+        )
         fig_g.update_yaxes(autorange="reversed")
         fig_g.update_layout(margin=dict(l=10,r=10,t=60,b=10), height=520)
-        st.plotly_chart(fig_g, use_container_width=True)
+        st.plotly_chart(fig_g, width='stretch')
     else:
         st.info("Nenhum projeto com início e término válidos.")
 else:
@@ -390,6 +393,6 @@ cols_exibir = [c for c in [
     "Data de Início","Data de Término","Ano de Término","Mês de Término Nome"
 ] if c in df_view.columns]
 if cols_exibir:
-    st.dataframe(df_view[cols_exibir], use_container_width=True, height=420)
+    st.dataframe(df_view[cols_exibir], width='stretch', height=420)
 else:
     st.info("Sem colunas para exibir nessa visão.")
