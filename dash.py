@@ -26,17 +26,19 @@ st.set_page_config(
 st.markdown("""
 <style>
 html, body, [class*="css"]{font-family:Inter,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
-.block-container{padding-top:1rem;padding-bottom:.5rem} h1,h2,h3{letter-spacing:.2px}
-.kpi{background:#fff;border:1px solid #e9ecef;border-radius:14px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-.kpi .label{color:#6c757d;font-size:.85rem;margin-bottom:6px}
-.kpi .value{font-weight:700;font-size:1.6rem;color:#212529}
+.block-container{padding-top:1.6rem !important; padding-bottom:.5rem}
+h1,h2,h3{letter-spacing:.2px}
+.kpi{background:#fff; border:1px solid #e9ecef; border-radius:14px; padding:16px 18px; box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.kpi .label{color:#6c757d; font-size:.85rem; margin-bottom:6px}
+.kpi .value{font-weight:700; font-size:1.6rem; color:#212529}
 @media (prefers-color-scheme: dark){
-  .kpi{background:#121212;border-color:#2a2a2a;box-shadow:0 2px 14px rgba(0,0,0,.5)}
+  .kpi{background:#121212; border-color:#2a2a2a; box-shadow:0 2px 14px rgba(0,0,0,.5)}
   .kpi .label{color:#b0b0b0} .kpi .value{color:#f1f3f5}
 }
-.section-title{margin-top:.8rem;margin-bottom:.2rem;font-weight:700;font-size:1.05rem;color:#495057;text-transform:uppercase;letter-spacing:.06em}
+.section-title{margin-top:.8rem; margin-bottom:.2rem; font-weight:700; font-size:1.05rem; color:#495057; text-transform:uppercase; letter-spacing:.06em}
 @media (prefers-color-scheme: dark){.section-title{color:#d0d4d9}}
-[data-testid="stDataFrame"] div[role="gridcell"]{font-size:.9rem}
+[data-testid="column"]{overflow:visible !important;}
+div[role="gridcell"]{font-size:.9rem}
 </style>
 """, unsafe_allow_html=True)
 
@@ -149,7 +151,6 @@ def ensure_filter_state(df):
     ss.setdefault("k_dataini", data_min)
     ss.setdefault("k_datafim", data_max)
     ss.setdefault("k_incluir_sem_data", True)
-    # clamp
     ss.k_dataini = max(min(ss.k_dataini, data_max), data_min)
     ss.k_datafim = max(min(ss.k_datafim, data_max), data_min)
     if ss.k_dataini > ss.k_datafim:
@@ -230,9 +231,6 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
     log(f"Notion: linhas={len(df)} | projetos únicos={df['Projeto'].nunique() if not df.empty else 0} | NaT término={df['Data de Término'].isna().sum() if 'Data de Término' in df.columns else '-'}")
     return df
 
-# ====== SIDEBAR / FILTROS ======
-# st.sidebar.image(str(LOGO_PATH), width='stretch')  # logo na sidebar
-
 # ====== REFRESH ======
 if st.sidebar.button("🔄 Atualizar do Notion agora", key="btn_refresh_notion"):
     load_from_notion.clear()
@@ -241,6 +239,7 @@ if st.sidebar.button("🔄 Atualizar do Notion agora", key="btn_refresh_notion")
 # ====== DADOS ======
 df = load_from_notion(NOTION_DB)
 
+# ====== SIDEBAR / FILTROS ======
 st.sidebar.markdown("## ⚙️ Filtros")
 data_min, data_max = ensure_filter_state(df)
 
@@ -291,24 +290,33 @@ if "Data de Término" in df_f.columns:
 log(f"após filtros: linhas={len(df_f)} | incluir_sem_data={incluir_sem_data}")
 
 # ====== HEADER + KPIs ======
-col_logo, col_title = st.columns([1, 10])
+st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
+col_logo, col_title = st.columns([0.12, 0.88], vertical_alignment="center")
 with col_logo:
-    # imagem do topo
     st.image(str(LOGO_PATH), width='content')
 with col_title:
     st.title("Área de Planejamento")
 
 c1, c2, c3, c4 = st.columns(4)
+
+# --- KPIs atualizados ---
+total_projetos = df_f["Projeto"].nunique() if "Projeto" in df_f.columns else 0
+andamento = 0
+if {"Projeto","Status"}.issubset(df_f.columns):
+    andamento = df_f.loc[
+        df_f["Status"].astype(str).str.strip().str.casefold() == "em andamento".casefold(),
+        "Projeto"
+    ].nunique()
+
 total_reg = len(df_f)
-proj_unicos = df_f["Projeto"].nunique() if "Projeto" in df_f.columns else 0
 concl = (df_f["Status"] == "Concluído").sum() if "Status" in df_f.columns else 0
 taxa_conc = (concl / total_reg * 100) if total_reg else 0.0
 ult_termino = df_f["Data de Término"].max() if "Data de Término" in df_f.columns else pd.NaT
 ult_termino_br = ult_termino.strftime("%d/%m/%Y") if pd.notna(ult_termino) else "—"
 
 for col, label, value in [
-    (c1, "Total de Registros", f"{total_reg:,}".replace(",", ".")),
-    (c2, "Projetos Únicos", f"{proj_unicos:,}".replace(",", ".")),
+    (c1, "Total de Projetos", f"{total_projetos:,}".replace(",", ".")),
+    (c2, "Projetos em Andamento", f"{andamento:,}".replace(",", ".")),
     (c3, "Concluídos", f"{concl:,}".replace(",", ".")),
     (c4, "Taxa de Conclusão", f"{taxa_conc:,.1f}%".replace(",", "X").replace(".", ",").replace("X", ".")),
 ]:
