@@ -10,18 +10,27 @@ import streamlit as st
 from notion_client import Client
 from notion_client.errors import APIResponseError
 from dotenv import load_dotenv, find_dotenv
+from PIL import Image
 
 # ------ Locale PT-BR para nomes de meses ------
-try:
-    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-except locale.Error:
-    try:
-        locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil')
-    except locale.Error:
-        st.warning("⚠️ Não foi possível definir o locale para pt_BR, meses podem aparecer em inglês.")
+# try:
+#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+# except locale.Error:
+#     try:
+#         locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil')
+#     except locale.Error:
+#         st.warning("⚠️ Não foi possível definir o locale para pt_BR, meses podem aparecer em inglês.")
+
+
+ASSETS = Path(__file__).parent / "assets"
+LOGO_PATH = ASSETS / "logo.png" 
 
 # ============== STREAMLIT ==============
-st.set_page_config(page_title="Dashboard - Área de Planejamento", page_icon="📊", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(
+    page_title="Área de Planejamento", 
+    page_icon=Image.open(LOGO_PATH), 
+    layout="wide", 
+    initial_sidebar_state="expanded")
 st.markdown("""
 <style>
 html, body, [class*="css"]{font-family:Inter,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
@@ -283,7 +292,15 @@ if "Data de Término" in df_f.columns:
 log(f"após filtros: linhas={len(df_f)} | incluir_sem_data={incluir_sem_data}")
 
 # ============== CABEÇALHO + KPIs ==============
-st.title("📊 Dashboard - Área de Planejamento")
+# Header com logo + título alinhados
+col_logo, col_title = st.columns([1, 10])
+with col_logo:
+    st.image(str(LOGO_PATH), use_container_width=False, width=42)
+with col_title:
+    st.title("📊 Dashboard - Área de Planejamento")
+
+# Logo na sidebar
+st.sidebar.image(str(LOGO_PATH), use_container_width=True)
 
 c1, c2, c3, c4 = st.columns(4)
 total_reg = len(df_f)
