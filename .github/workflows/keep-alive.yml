@@ -1,0 +1,15 @@
+name: Keep Streamlit App Alive
+
+on:
+  schedule:
+    # Executa a cada 6 horas. O formato é 'Minuto Hora Dia-do-Mês Mês Dia-da-Semana'
+    # '0 */6 * * *' significa: no minuto 0, a cada 6 horas, todos os dias.
+    - cron: '0 */6 * * *'
+
+jobs:
+  ping-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send GET request to the app
+        # Substitua a URL abaixo pela URL da sua aplicação
+        run: curl "https://projetosplanejamento.streamlit.app/"
