@@ -296,7 +296,7 @@ with col_logo:
     # imagem do topo
     st.image(str(LOGO_PATH), width='content')
 with col_title:
-    st.title("Dashboard - Área de Planejamento")
+    st.title("Área de Planejamento")
 
 c1, c2, c3, c4 = st.columns(4)
 total_reg = len(df_f)
