@@ -1,7 +1,6 @@
 # app.py
 from pathlib import Path
 import os, re, logging
-import locale
 from logging.handlers import RotatingFileHandler
 from datetime import date
 import pandas as pd
@@ -10,36 +9,40 @@ import streamlit as st
 from notion_client import Client
 from notion_client.errors import APIResponseError
 from dotenv import load_dotenv, find_dotenv
+from PIL import Image
 
-# ------ Locale PT-BR para nomes de meses ------
-try:
-    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-except locale.Error:
-    try:
-        locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil')
-    except locale.Error:
-        st.warning("⚠️ Não foi possível definir o locale para pt_BR, meses podem aparecer em inglês.")
+# ====== PATHS / ASSETS ======
+ASSETS = Path(__file__).parent / "assets"
+LOGO_PATH = ASSETS / "logo.png"
 
-# ============== STREAMLIT ==============
-st.set_page_config(page_title="Dashboard - Área de Planejamento", page_icon="📊", layout="wide", initial_sidebar_state="expanded")
+# ====== STREAMLIT CONFIG ======
+st.set_page_config(
+    page_title="Área de Planejamento",
+    page_icon=Image.open(LOGO_PATH) if LOGO_PATH.exists() else None,
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 st.markdown("""
 <style>
 html, body, [class*="css"]{font-family:Inter,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
-.block-container{padding-top:1rem;padding-bottom:.5rem} h1,h2,h3{letter-spacing:.2px}
-.kpi{background:#fff;border:1px solid #e9ecef;border-radius:14px;padding:16px 18px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
-.kpi .label{color:#6c757d;font-size:.85rem;margin-bottom:6px}
-.kpi .value{font-weight:700;font-size:1.6rem;color:#212529}
+.block-container{padding-top:1.6rem !important; padding-bottom:.5rem}
+h1,h2,h3{letter-spacing:.2px}
+.kpi{background:#fff; border:1px solid #e9ecef; border-radius:14px; padding:16px 18px; box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.kpi .label{color:#6c757d; font-size:.85rem; margin-bottom:6px}
+.kpi .value{font-weight:700; font-size:1.6rem; color:#212529}
 @media (prefers-color-scheme: dark){
-  .kpi{background:#121212;border-color:#2a2a2a;box-shadow:0 2px 14px rgba(0,0,0,.5)}
+  .kpi{background:#121212; border-color:#2a2a2a; box-shadow:0 2px 14px rgba(0,0,0,.5)}
   .kpi .label{color:#b0b0b0} .kpi .value{color:#f1f3f5}
 }
-.section-title{margin-top:.8rem;margin-bottom:.2rem;font-weight:700;font-size:1.05rem;color:#495057;text-transform:uppercase;letter-spacing:.06em}
+.section-title{margin-top:.8rem; margin-bottom:.2rem; font-weight:700; font-size:1.05rem; color:#495057; text-transform:uppercase; letter-spacing:.06em}
 @media (prefers-color-scheme: dark){.section-title{color:#d0d4d9}}
-[data-testid="stDataFrame"] div[role="gridcell"]{font-size:.9rem}
+[data-testid="column"]{overflow:visible !important;}
+div[role="gridcell"]{font-size:.9rem}
 </style>
 """, unsafe_allow_html=True)
 
-# ============== LOGGING ==============
+# ====== LOGGING ======
 LOG_PATH = Path("dashboard.log")
 logger = logging.getLogger("proj_dash"); logger.setLevel(logging.INFO)
 if not logger.handlers:
@@ -47,7 +50,13 @@ if not logger.handlers:
     logger.addHandler(handler)
 log = logger.info
 
-# ============== ENV / NOTION (robusto) ==============
+if not LOGO_PATH.exists():
+    st.warning(f"Logo não encontrada: {LOGO_PATH}")
+    log(f"Logo ausente em {LOGO_PATH}")
+else:
+    log(f"Logo carregada: {LOGO_PATH}")
+
+# ====== ENV / NOTION ======
 _ = load_dotenv(find_dotenv(usecwd=True), override=False)
 
 def get_cred(name: str) -> str:
@@ -88,7 +97,7 @@ except APIResponseError as e:
              f"Detalhe: {e}")
     st.stop()
 
-# ============== MAPA DE PROPRIEDADES ==============
+# ====== MAPA DE PROPRIEDADES ======
 PROP_MAP = {
     "Projeto": ["Projeto", "Nome", "Title"],
     "Status": ["Status"],
@@ -100,7 +109,7 @@ PROP_MAP = {
     "Data de Término": ["Data de Término", "Termino", "Fim", "End"],
 }
 
-# ============== HELPERS ==============
+# ====== HELPERS ======
 def _match_prop(props, aliases):
     for name in props.keys():
         if name in aliases: return name
@@ -141,14 +150,13 @@ def ensure_filter_state(df):
     ss.setdefault("k_dataini", data_min)
     ss.setdefault("k_datafim", data_max)
     ss.setdefault("k_incluir_sem_data", True)
-    # clamp
     ss.k_dataini = max(min(ss.k_dataini, data_max), data_min)
     ss.k_datafim = max(min(ss.k_datafim, data_max), data_min)
     if ss.k_dataini > ss.k_datafim:
         ss.k_dataini, ss.k_datafim = data_min, data_max
     return data_min, data_max
 
-# ============== LOAD FROM NOTION ==============
+# ====== LOAD FROM NOTION ======
 @st.cache_data(show_spinner=True, ttl=300)
 def load_from_notion(db_id: str) -> pd.DataFrame:
     rows, start_cursor = [], None
@@ -221,15 +229,15 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
 
     return df
 
-# -------- Botão ÚNICO de atualizar (key dedicada) --------
+# ====== REFRESH ======
 if st.sidebar.button("🔄 Atualizar do Notion agora", key="btn_refresh_notion"):
     load_from_notion.clear()
     st.rerun()
 
-# -------- Carrega dados --------
+# ====== DADOS ======
 df = load_from_notion(NOTION_DB)
 
-# ============== SIDEBAR (filtros) ==============
+# ====== SIDEBAR / FILTROS ======
 st.sidebar.markdown("## ⚙️ Filtros")
 data_min, data_max = ensure_filter_state(df)
 
@@ -251,7 +259,6 @@ def _reset_filters():
 
 st.sidebar.button("♻️ Limpar filtros", on_click=_reset_filters, key="btn_reset_filters")
 
-# widgets
 status_sel   = st.sidebar.multiselect("Status",     options=status_opts,  key="k_status")
 priori_sel   = st.sidebar.multiselect("Prioridade", options=priori_opts,  key="k_prioridade")
 setor_sel    = st.sidebar.multiselect("Setor",      options=setor_opts,   key="k_setor")
@@ -295,20 +302,34 @@ if "Data de Término" in df_f.columns:
         df_f = df_f[with_data & (df_f["Data de Término"].dt.date >= data_ini) & (df_f["Data de Término"].dt.date <= data_fim)]
 
 
-# ============== CABEÇALHO + KPIs ==============
-st.title("📊 Dashboard - Área de Planejamento")
+# ====== HEADER + KPIs ======
+st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
+col_logo, col_title = st.columns([0.12, 0.88], vertical_alignment="center")
+with col_logo:
+    st.image(str(LOGO_PATH), width='content')
+with col_title:
+    st.title("Área de Planejamento")
 
 c1, c2, c3, c4 = st.columns(4)
+
+# --- KPIs atualizados ---
+total_projetos = df_f["Projeto"].nunique() if "Projeto" in df_f.columns else 0
+andamento = 0
+if {"Projeto","Status"}.issubset(df_f.columns):
+    andamento = df_f.loc[
+        df_f["Status"].astype(str).str.strip().str.casefold() == "em andamento".casefold(),
+        "Projeto"
+    ].nunique()
+
 total_reg = len(df_f)
-proj_unicos = df_f["Projeto"].nunique() if "Projeto" in df_f.columns else 0
 concl = (df_f["Status"] == "Concluído").sum() if "Status" in df_f.columns else 0
 taxa_conc = (concl / total_reg * 100) if total_reg else 0.0
 ult_termino = df_f["Data de Término"].max() if "Data de Término" in df_f.columns else pd.NaT
 ult_termino_br = ult_termino.strftime("%d/%m/%Y") if pd.notna(ult_termino) else "—"
 
 for col, label, value in [
-    (c1, "Total de Registros", f"{total_reg:,}".replace(",", ".")),
-    (c2, "Projetos Únicos", f"{proj_unicos:,}".replace(",", ".")),
+    (c1, "Total de Projetos", f"{total_projetos:,}".replace(",", ".")),
+    (c2, "Projetos em Andamento", f"{andamento:,}".replace(",", ".")),
     (c3, "Concluídos", f"{concl:,}".replace(",", ".")),
     (c4, "Taxa de Conclusão", f"{taxa_conc:,.1f}%".replace(",", "X").replace(".", ",").replace("X", ".")),
 ]:
@@ -317,7 +338,7 @@ for col, label, value in [
 
 st.markdown(f'<div class="section-title">Última Data de Término: {ult_termino_br}</div>', unsafe_allow_html=True)
 
-# ============== GRÁFICOS ==============
+# ====== GRÁFICOS ======
 px.defaults.template = "plotly_white"
 PALETA = px.colors.qualitative.Set2
 
@@ -325,7 +346,8 @@ g1, g2 = st.columns(2)
 if "Prioridade" in df_f.columns and not df_f.empty:
     p_counts = df_f["Prioridade"].value_counts(dropna=False).reset_index()
     p_counts.columns = ["Prioridade", "Quantidade"]
-    fig_p = px.bar(p_counts, x="Prioridade", y="Quantidade", color="Prioridade", color_discrete_sequence=PALETA, title="Projetos por Prioridade")
+    fig_p = px.bar(p_counts, x="Prioridade", y="Quantidade", color="Prioridade",
+                   color_discrete_sequence=PALETA, title="Projetos por Prioridade")
     fig_p.update_layout(showlegend=False, margin=dict(l=10,r=10,t=60,b=10))
     g1.plotly_chart(fig_p, use_container_width=True, config=PLOTLY_CONFIG)
 else:
@@ -334,7 +356,8 @@ else:
 if "Status" in df_f.columns and not df_f.empty:
     s_counts = df_f["Status"].value_counts(dropna=False).reset_index()
     s_counts.columns = ["Status", "Quantidade"]
-    fig_s = px.pie(s_counts, names="Status", values="Quantidade", hole=.5, color="Status", color_discrete_sequence=PALETA, title="Distribuição por Status")
+    fig_s = px.pie(s_counts, names="Status", values="Quantidade", hole=.5, color="Status",
+                   color_discrete_sequence=PALETA, title="Distribuição por Status")
     fig_s.update_traces(textposition="inside", textinfo="percent+label")
     fig_s.update_layout(margin=dict(l=10,r=10,t=60,b=10))
     g2.plotly_chart(fig_s, use_container_width=True, config=PLOTLY_CONFIG)
@@ -344,7 +367,8 @@ else:
 st.markdown('<div class="section-title">Análise por Setor</div>', unsafe_allow_html=True)
 if {"Setor","Status"}.issubset(df_f.columns) and not df_f.empty:
     ct = (df_f.groupby(["Setor","Status"]).size().reset_index(name="Quantidade"))
-    fig_st = px.bar(ct, x="Setor", y="Quantidade", color="Status", barmode="stack", color_discrete_sequence=PALETA, title="Projetos por Setor (Empilhado por Status)")
+    fig_st = px.bar(ct, x="Setor", y="Quantidade", color="Status", barmode="stack",
+                    color_discrete_sequence=PALETA, title="Projetos por Setor (Empilhado por Status)")
     fig_st.update_layout(xaxis={'categoryorder':'total descending'}, margin=dict(l=10,r=10,t=60,b=10))
     st.plotly_chart(fig_st, use_container_width=True, config=PLOTLY_CONFIG)
 else:
@@ -367,7 +391,11 @@ if {"Projeto","Data de Início","Data de Término"}.issubset(df_f.columns):
     gantt = df_f.dropna(subset=["Data de Início","Data de Término"]).copy()
     gantt = gantt[gantt["Data de Término"] >= gantt["Data de Início"]]
     if not gantt.empty:
-        fig_g = px.timeline(gantt, x_start="Data de Início", x_end="Data de Término", y="Projeto", color="Status" if "Status" in gantt.columns else None, color_discrete_sequence=PALETA, title="Cronograma dos Projetos")
+        fig_g = px.timeline(
+            gantt, x_start="Data de Início", x_end="Data de Término", y="Projeto",
+            color="Status" if "Status" in gantt.columns else None,
+            color_discrete_sequence=PALETA, title="Cronograma dos Projetos"
+        )
         fig_g.update_yaxes(autorange="reversed")
         fig_g.update_layout(margin=dict(l=10,r=10,t=60,b=10), height=520)
         st.plotly_chart(fig_g, use_container_width=True, config=PLOTLY_CONFIG)
@@ -386,6 +414,6 @@ cols_exibir = [c for c in [
     "Data de Início","Data de Término","Ano de Término","Mês de Término Nome"
 ] if c in df_view.columns]
 if cols_exibir:
-    st.dataframe(df_view[cols_exibir], use_container_width=True, height=420)
+    st.dataframe(df_view[cols_exibir], width='stretch', height=420)
 else:
     st.info("Sem colunas para exibir nessa visão.")
