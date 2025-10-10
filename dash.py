@@ -44,7 +44,6 @@ LOG_PATH = Path("dashboard.log")
 logger = logging.getLogger("proj_dash"); logger.setLevel(logging.INFO)
 if not logger.handlers:
     handler = RotatingFileHandler(LOG_PATH, maxBytes=1_000_000, backupCount=2, encoding="utf-8")
-    handler.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(message)s"))
     logger.addHandler(handler)
 log = logger.info
 
@@ -220,7 +219,6 @@ def load_from_notion(db_id: str) -> pd.DataFrame:
     else:
         df["Ano de Término"] = pd.NA; df["PeriodoMes"] = pd.NA; df["Mês de Término Nome"] = pd.NA
 
-    log(f"Notion: linhas={len(df)} | projetos únicos={df['Projeto'].nunique() if not df.empty else 0} | NaT término={df['Data de Término'].isna().sum() if 'Data de Término' in df.columns else '-'}")
     return df
 
 # -------- Botão ÚNICO de atualizar (key dedicada) --------
@@ -263,6 +261,22 @@ data_ini     = st.sidebar.date_input("Data inicial (Término)", min_value=data_m
 data_fim     = st.sidebar.date_input("Data final (Término)",   min_value=data_min, max_value=data_max, key="k_datafim")
 incluir_sem_data = st.sidebar.checkbox("Incluir itens sem Data de Término", key="k_incluir_sem_data")
 
+# ---- Toggle p/ barra de ferramentas do Plotly (mode bar) ----
+show_modebar = st.sidebar.checkbox(
+    "Exibir barra de ferramentas (Plotly mode bar)",
+    value=False,
+    help="Alterna a exibição do mode bar em todos os gráficos Plotly."
+)
+
+# ============== CONFIG PLOTLY (via 'config'=recomendado) ==============
+PLOTLY_CONFIG = {
+    "displayModeBar": show_modebar,
+    "responsive": True,
+    "locale": "pt-BR",
+    # Exemplo: habilitar botão de exportação em alta resolução
+    # "toImageButtonOptions": {"format": "png", "filename": "dashboard", "scale": 2}
+}
+
 # ============== FILTROS ==============
 df_f = df.copy()
 if status_sel:   df_f = df_f[df_f["Status"].isin(status_sel)]
@@ -280,7 +294,6 @@ if "Data de Término" in df_f.columns:
     else:
         df_f = df_f[with_data & (df_f["Data de Término"].dt.date >= data_ini) & (df_f["Data de Término"].dt.date <= data_fim)]
 
-log(f"após filtros: linhas={len(df_f)} | incluir_sem_data={incluir_sem_data}")
 
 # ============== CABEÇALHO + KPIs ==============
 st.title("📊 Dashboard - Área de Planejamento")
@@ -314,7 +327,7 @@ if "Prioridade" in df_f.columns and not df_f.empty:
     p_counts.columns = ["Prioridade", "Quantidade"]
     fig_p = px.bar(p_counts, x="Prioridade", y="Quantidade", color="Prioridade", color_discrete_sequence=PALETA, title="Projetos por Prioridade")
     fig_p.update_layout(showlegend=False, margin=dict(l=10,r=10,t=60,b=10))
-    g1.plotly_chart(fig_p, use_container_width=True)
+    g1.plotly_chart(fig_p, use_container_width=True, config=PLOTLY_CONFIG)
 else:
     g1.info("Sem dados de Prioridade.")
 
@@ -324,7 +337,7 @@ if "Status" in df_f.columns and not df_f.empty:
     fig_s = px.pie(s_counts, names="Status", values="Quantidade", hole=.5, color="Status", color_discrete_sequence=PALETA, title="Distribuição por Status")
     fig_s.update_traces(textposition="inside", textinfo="percent+label")
     fig_s.update_layout(margin=dict(l=10,r=10,t=60,b=10))
-    g2.plotly_chart(fig_s, use_container_width=True)
+    g2.plotly_chart(fig_s, use_container_width=True, config=PLOTLY_CONFIG)
 else:
     g2.info("Sem dados de Status.")
 
@@ -333,7 +346,7 @@ if {"Setor","Status"}.issubset(df_f.columns) and not df_f.empty:
     ct = (df_f.groupby(["Setor","Status"]).size().reset_index(name="Quantidade"))
     fig_st = px.bar(ct, x="Setor", y="Quantidade", color="Status", barmode="stack", color_discrete_sequence=PALETA, title="Projetos por Setor (Empilhado por Status)")
     fig_st.update_layout(xaxis={'categoryorder':'total descending'}, margin=dict(l=10,r=10,t=60,b=10))
-    st.plotly_chart(fig_st, use_container_width=True)
+    st.plotly_chart(fig_st, use_container_width=True, config=PLOTLY_CONFIG)
 else:
     st.info("Sem dados suficientes para Setor x Status.")
 
@@ -345,7 +358,7 @@ if not df_mes.empty:
     mc = mc.sort_values("PeriodoMes")
     fig_m = px.line(mc, x="Label", y="Quantidade", markers=True, title="Quantidade por Mês de Término")
     fig_m.update_layout(margin=dict(l=10,r=10,t=60,b=10))
-    st.plotly_chart(fig_m, use_container_width=True)
+    st.plotly_chart(fig_m, use_container_width=True, config=PLOTLY_CONFIG)
 else:
     st.info("Sem datas de término para série temporal.")
 
@@ -357,7 +370,7 @@ if {"Projeto","Data de Início","Data de Término"}.issubset(df_f.columns):
         fig_g = px.timeline(gantt, x_start="Data de Início", x_end="Data de Término", y="Projeto", color="Status" if "Status" in gantt.columns else None, color_discrete_sequence=PALETA, title="Cronograma dos Projetos")
         fig_g.update_yaxes(autorange="reversed")
         fig_g.update_layout(margin=dict(l=10,r=10,t=60,b=10), height=520)
-        st.plotly_chart(fig_g, use_container_width=True)
+        st.plotly_chart(fig_g, use_container_width=True, config=PLOTLY_CONFIG)
     else:
         st.info("Nenhum projeto com início e término válidos.")
 else:
