@@ -37,3 +37,5 @@
 2025-08-12 18:05:41,612 | INFO | após filtros: linhas=173 | incluir_sem_data=True
 2025-08-12 18:05:51,326 | INFO | Notion: linhas=173 | projetos únicos=173 | NaT término=97
 2025-08-12 18:05:51,345 | INFO | após filtros: linhas=173 | incluir_sem_data=True
+2025-10-09 22:42:52,052 | INFO | Notion: linhas=190 | projetos únicos=187 | NaT término=104
+2025-10-09 22:42:52,067 | INFO | após filtros: linhas=190 | incluir_sem_data=True
