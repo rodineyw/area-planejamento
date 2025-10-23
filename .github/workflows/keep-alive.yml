@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: Send GET request to the app
         # Substitua a URL abaixo pela URL da sua aplicação
-        run: curl "https://projetosplanejamento.streamlit.app/"
+        run: curl --max-time 10 "https://projetosplanejamento.streamlit.app/"
